@@ -23,6 +23,8 @@ void elevatorStart(void) {
     osMagicFloors[i].totalWeight = 0;
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
+    osMagicFloors[i].floorPassengers.next = NULL;
+    osMagicFloors[i].floorPassengers.prev = NULL;
   }
 }
 
@@ -33,44 +35,55 @@ void elevatorStop(void) {
 // Floor functions
 
 void addToFloor(int floorNum, Passenger pgr) {
-  PassengerNode *newPassenger;
+  PassengerNode *newPassengerNode;
 
+  printk("TEST before allocating mem for node\n");
   // Add the passenger to the floor's list of waiting passengers
-  newPassenger = kmalloc(sizeof(PassengerNode), __GFP_WAIT | __GFP_IO | __GFP_FS);
-  newPassenger->passenger = pgr;
+  newPassengerNode = kmalloc(sizeof(PassengerNode), __GFP_WAIT | __GFP_IO | __GFP_FS);
 
-  list_add_tail(&newPassenger->passengerList, &osMagicFloors[floorNum].floorPassengers);
+  if (newPassengerNode == NULL) {
+    printk("ERROR: Failed to allocate passenger node\n");
+    return;
+  }
+
+  newPassengerNode->passenger = pgr;
+  newPassengerNode->passengerList.next = NULL;
+  newPassengerNode->passengerList.prev = NULL;
+
+
+  printk("TEST before adding to floor's passengers");
+  list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
+  printk("TEST after adding to floor's passengers");
 
   osMagicFloors[floorNum].totalWeight += pgr.weight;
   osMagicFloors[floorNum].totalPass += pgr.size;
 }
 
 Passenger createPassenger(int passengerType, int destFloor) {
-  Passenger newPassenger;
+  Passenger newPassengerNode;
 
-  newPassenger.destination = destFloor;
-  return newPassenger;
+  newPassengerNode.destination = destFloor;
 
   switch(passengerType) {
     case 0:
-      newPassenger.weight = 1;
-      newPassenger.size = 1;
+      newPassengerNode.weight = 1;
+      newPassengerNode.size = 1;
       break;
     case 1:
-      newPassenger.weight = 0.5;
-      newPassenger.size = 1;
+      newPassengerNode.weight = 0.5;
+      newPassengerNode.size = 1;
       break;
     case 2:
-      newPassenger.weight = 2;
-      newPassenger.size = 2;
+      newPassengerNode.weight = 2;
+      newPassengerNode.size = 2;
       break;
     case 3:
-      newPassenger.weight = 2;
-      newPassenger.size = 1;
+      newPassengerNode.weight = 2;
+      newPassengerNode.size = 1;
       break;
   }
-  
-  return newPassenger;
+
+  return newPassengerNode;
 }
 
 // Elevator functions
@@ -78,26 +91,26 @@ Passenger createPassenger(int passengerType, int destFloor) {
 void moveToFloor(int floorNum) {
   // Change status from IDLE to UP/Down
   osMagicElv.state = 1;
-  ssleep(4); 
+  ssleep(4);
   osMagicElv.currentFloor = floorNum;
 }
 
 // Load appropriate passengers from elevator's current floor until capacity
 void loadPassengers(void) {
-  PassengerNode *newPassenger;
+  PassengerNode *newPassengerNode;
 
-  newPassenger = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
+  newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
 	PassengerNode, passengerList);
 
   // Update floor data
   osMagicFloors[osMagicElv.currentFloor].totalServed++;
-  osMagicFloors[osMagicElv.currentFloor].totalWeight-= newPassenger->passenger.weight;
-  osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassenger->passenger.size;
+  osMagicFloors[osMagicElv.currentFloor].totalWeight-= newPassengerNode->passenger.weight;
+  osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassengerNode->passenger.size;
   // Update elevator data
-  osMagicElv.weightLoad += newPassenger->passenger.weight;
-  osMagicElv.passLoad += newPassenger->passenger.size;
+  osMagicElv.weightLoad += newPassengerNode->passenger.weight;
+  osMagicElv.passLoad += newPassengerNode->passenger.size;
 
-  list_move_tail(&newPassenger->passengerList, &osMagicElv.elvPassengers);
+  list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
 }
 
 // Unload passengers whose destination is the current floor

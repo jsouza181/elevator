@@ -44,7 +44,7 @@ void serviceFloors(void) {
       kfree(nextFloorToVisit);
     }
     else // No requests left, go IDLE
-      osMagicElv.state = 0;
+      osMagicElv.state = IDLE;
   }
   */
 }

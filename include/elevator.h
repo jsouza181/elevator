@@ -1,6 +1,12 @@
 #ifndef __ELEVATOR_ELEVATOR_H
 #define __ELEVATOR_ELEVATOR_H
 
+#define IDLE 0
+#define UP 1
+#define DOWN 2
+#define LOADING 3
+#define STOPPED 4
+
 typedef struct passenger {
   int destination;
   int weight;

@@ -17,9 +17,9 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
 
   printk("New request: %d, %d => %d\n", passenger_type, start_floor, destination_floor);
 
-  Passenger p = createPassenger(passenger_type, destination_floor);
   // Create a passenger, then add them to the start floor
   //addToFloor(start_floor, createPassenger(passenger_type, destination_floor));
+  addToFloor(2, createPassenger(passenger_type, destination_floor));
 
   // Send elevator to the new request if it is idle
 /*
