@@ -23,8 +23,9 @@ void elevatorStart(void) {
     osMagicFloors[i].totalWeight = 0;
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
-    osMagicFloors[i].floorPassengers.next = NULL;
-    osMagicFloors[i].floorPassengers.prev = NULL;
+    INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
+    //osMagicFloors[i].floorPassengers.next = NULL;
+    //osMagicFloors[i].floorPassengers.prev = NULL;
   }
 }
 
@@ -47,8 +48,8 @@ void addToFloor(int floorNum, Passenger pgr) {
   }
 
   newPassengerNode->passenger = pgr;
-  newPassengerNode->passengerList.next = NULL;
-  newPassengerNode->passengerList.prev = NULL;
+  //newPassengerNode->passengerList.next = NULL;
+  //newPassengerNode->passengerList.prev = NULL;
 
 
   printk("TEST before adding to floor's passengers");
