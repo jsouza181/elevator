@@ -9,7 +9,8 @@
 
 typedef struct passenger {
   int destination;
-  float weight;
+  int weightWhole;
+  int weightFrac;
   int size;
 } Passenger;
 
@@ -19,7 +20,8 @@ typedef struct passengerNode {
 } PassengerNode;
 
 typedef struct floor {
-  float totalWeight;
+  int totalWeightWhole;
+  int totalWeightFrac;
   int totalPass;
   int totalServed;
   struct list_head floorPassengers;
@@ -29,9 +31,10 @@ typedef struct elevator {
   int state; //IDLE, UP, DOWN, LOADING, STOPPED
   int currentFloor;
   int destFloor;
-  int passLoad;
-  float weightLoad; //change to double - kernel C limitation?
-  float maxWeight;
+  int totalWeightWhole;
+  int totalWeightFrac;
+  int totalPass;
+  int maxWeight;
   int maxPass;
   struct list_head elvPassengers;
 } Elevator;

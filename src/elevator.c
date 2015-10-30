@@ -13,15 +13,17 @@ void elevatorStart(void) {
   osMagicElv.state = 0;
   osMagicElv.currentFloor = 0;
   osMagicElv.destFloor = 0;
-  osMagicElv.passLoad = 0;
-  osMagicElv.weightLoad = 0;
+  osMagicElv.totalPass = 0;
+  osMagicElv.totalWeightWhole = 0;
+  osMagicElv.totalWeightFrac = 0;
   osMagicElv.maxWeight = 8;
   osMagicElv.maxPass = 8;
   INIT_LIST_HEAD(&osMagicElv.elvPassengers);
 
   // Initialize floors
   for(i = 0; i < 10; i++) {
-    osMagicFloors[i].totalWeight = 0;
+    osMagicFloors[i].totalWeightWhole = 0;
+    osMagicFloors[i].totalWeightFrac = 0;
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
@@ -47,14 +49,16 @@ void addToFloor(int floorNum, Passenger pgr) {
   }
 
   newPassengerNode->passenger.destination = pgr.destination;
-  newPassengerNode->passenger.weight = pgr.weight;
+  newPassengerNode->passenger.weightWhole = pgr.weightWhole;
+  newPassengerNode->passenger.weightFrac = pgr.weightFrac;
   newPassengerNode->passenger.size = pgr.size;
 
   printk("TEST before adding to floor's passengers");
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
   printk("TEST after adding to floor's passengers");
 
-  osMagicFloors[floorNum].totalWeight += newPassengerNode->passenger.weight;
+  osMagicFloors[floorNum].totalWeightWhole += newPassengerNode->passenger.weightWhole;
+  osMagicFloors[floorNum].totalWeightFrac += newPassengerNode->passenger.weightFrac;
   osMagicFloors[floorNum].totalPass += newPassengerNode->passenger.size;
 }
 
@@ -65,19 +69,23 @@ Passenger createPassenger(int passengerType, int destFloor) {
 
   switch(passengerType) {
     case 0:
-      newPassenger.weight = 1;
+      newPassenger.weightWhole = 1;
+      newPassenger.weightFrac = 0;
       newPassenger.size = 1;
       break;
     case 1:
-      newPassenger.weight = 1/2;
+      newPassenger.weightWhole = 0;
+      newPassenger.weightFrac = 1;
       newPassenger.size = 1;
       break;
     case 2:
-      newPassenger.weight = 2;
+      newPassenger.weightWhole = 2;
+      newPassenger.weightFrac = 0;
       newPassenger.size = 2;
       break;
     case 3:
-      newPassenger.weight = 2;
+      newPassenger.weightWhole = 2;
+      newPassenger.weightFrac = 0;
       newPassenger.size = 1;
       break;
   }
@@ -103,11 +111,13 @@ void loadPassengers(void) {
 
   // Update floor data
   osMagicFloors[osMagicElv.currentFloor].totalServed++;
-  osMagicFloors[osMagicElv.currentFloor].totalWeight-= newPassengerNode->passenger.weight;
+  osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -= newPassengerNode->passenger.weightWhole;
+  osMagicFloors[osMagicElv.currentFloor].totalWeightFrac -= newPassengerNode->passenger.weightFrac;
   osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassengerNode->passenger.size;
   // Update elevator data
-  osMagicElv.weightLoad += newPassengerNode->passenger.weight;
-  osMagicElv.passLoad += newPassengerNode->passenger.size;
+  osMagicElv.totalWeightWhole += newPassengerNode->passenger.weightWhole;
+  osMagicElv.totalWeightFrac += newPassengerNode->passenger.weightFrac;
+  osMagicElv.totalPass += newPassengerNode->passenger.size;
 
   list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
 }
@@ -118,8 +128,9 @@ void unloadPassengers(void) {
 
   servicedPassenger = list_first_entry(&osMagicElv.elvPassengers, PassengerNode, passengerList);
 
-  osMagicElv.weightLoad -= servicedPassenger->passenger.weight;
-  osMagicElv.passLoad -= servicedPassenger->passenger.size;
+  osMagicElv.totalWeightWhole -= servicedPassenger->passenger.weightWhole;
+  osMagicElv.totalWeightFrac -= servicedPassenger->passenger.weightFrac;
+  osMagicElv.totalPass -= servicedPassenger->passenger.size;
 
   list_del_init(&servicedPassenger->passengerList);
   kfree(servicedPassenger);

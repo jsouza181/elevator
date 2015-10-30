@@ -12,11 +12,18 @@
 static struct file_operations fops;
 char message[2048];
 static int read_p;
-// Need to be able to access elevator and floor data for /proc reads
 
 int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file);
 ssize_t elevatorProcRead(struct file *sp_file, char __user *buf, size_t size, loff_t *offset);
 int elevatorProcRelease(struct inode *sp_inode, struct file *sp_file);
+
+// Utility functions to convert our whole/frac to a number.5
+int findWeightWhole(int whole, int frac) {
+  return whole + (frac / 10);
+}
+int findWeightFrac(int whole, int frac) {
+  return frac % 10;
+}
 
 // Called when module is inserted.
 int elevatorProcCreate(void) {
@@ -38,7 +45,6 @@ void elevatorProcRemove(void) {
   remove_proc_entry(ENTRY_NAME, NULL);
 }
 
-
 int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
   char numToString[128]; // Temp string used to add ints to the message
   int i;
@@ -50,14 +56,15 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
       osMagicElv.state, osMagicElv.currentFloor + 1, osMagicElv.destFloor + 1);
   strcat(message, numToString);
 
-  sprintf(numToString, "  CurrentPassLoad: %d\n  CurrentWeightLoad: %d\n",
-      osMagicElv.passLoad, osMagicElv.weightLoad);
+  sprintf(numToString, "  Total Weight Load: %d\n  Total Passenger Load: %d.%d\n",
+      findWeightWhole(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac),
+      findWeightFrac(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac), osMagicElv.totalPass);
   strcat(message, numToString);
 
   strcat(message, "Floor data:\n");
   for(i = 0; i < 10; i++) {
     sprintf(numToString, "  Floor [%d]:\n    Total Weight Load: %d\n",
-        i + 1, osMagicFloors[i].totalWeight);
+        i + 1, osMagicFloors[i].totalWeightWhole);
     strcat(message, numToString);
 
     sprintf(numToString, "    Total Passenger Load: %d\n    Passengers Serviced: %d\n",
