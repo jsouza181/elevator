@@ -44,7 +44,7 @@ extern Floor osMagicFloors[10];
 
 // Utility functions
 int findWeightWhole(int whole, int frac);
-int findWeightFrac(int whole, int frac);
+int findWeightFrac(int frac);
 
 // Floor functions
 void addToFloor(int floorNum, Passenger pgr);

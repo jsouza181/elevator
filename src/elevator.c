@@ -42,8 +42,39 @@ void elevatorStop(void) {
 int findWeightWhole(int whole, int frac) {
   return whole + (frac / 10);
 }
-int findWeightFrac(int whole, int frac) {
+int findWeightFrac(int frac) {
   return frac % 10;
+}
+
+// Determine whether a given passenger type can fit on the elevator.
+// Return 0 if it will not fit.
+int willItFit(int passengerType) {
+  int elvWhole = osMagicElv.totalWeightWhole;
+  int elvFrac = osMagicElv.totalWeightFrac;
+
+  // Check for weight overloads. These only occur at 6.5 and greater
+  if(elvWhole >= 8) { // Already full
+    return 0;
+  }
+  else if(elvWhole == 7) {
+    if(elvFrac == 5) { // 7.5
+      if(passengerType != 1) // Only a child can fit
+        return 0;
+    }
+    else { // 7.0
+      if(passengerType >= 2) // Staff will not fit
+        return 0;
+    }
+  }
+  else if(elvWhole == 6) {
+    if(elvFrac == 5) { // 6.5
+      if(passengerType >= 2) // Staff will not fit
+        return 0;
+    }
+  }
+
+  // Check for size differences.
+  return 1;
 }
 
 /*
@@ -127,12 +158,15 @@ void loadPassengers(void) {
 
   // Update floor data
   osMagicFloors[osMagicElv.currentFloor].totalServed++;
-  osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -= newPassengerNode->passenger.weightWhole;
-  osMagicFloors[osMagicElv.currentFloor].totalWeightFrac -= newPassengerNode->passenger.weightFrac;
+  osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
+      findWeightWhole(newPassengerNode->passenger.weightWhole, newPassengerNode->passenger.weightFrac);
+  osMagicFloors[osMagicElv.currentFloor].totalWeightFrac -=
+      findWeightFrac(newPassengerNode->passenger.weightFrac);
   osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassengerNode->passenger.size;
   // Update elevator data
-  osMagicElv.totalWeightWhole += newPassengerNode->passenger.weightWhole;
-  osMagicElv.totalWeightFrac += newPassengerNode->passenger.weightFrac;
+  osMagicElv.totalWeightWhole += findWeightWhole(newPassengerNode->passenger.weightWhole,
+      newPassengerNode->passenger.weightFrac);
+  osMagicElv.totalWeightFrac += findWeightFrac(newPassengerNode->passenger.weightFrac);
   osMagicElv.totalPass += newPassengerNode->passenger.size;
 
   list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
@@ -144,8 +178,9 @@ void unloadPassengers(void) {
 
   servicedPassenger = list_first_entry(&osMagicElv.elvPassengers, PassengerNode, passengerList);
 
-  osMagicElv.totalWeightWhole -= servicedPassenger->passenger.weightWhole;
-  osMagicElv.totalWeightFrac -= servicedPassenger->passenger.weightFrac;
+  osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
+      servicedPassenger->passenger.weightFrac);
+  osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
   osMagicElv.totalPass -= servicedPassenger->passenger.size;
 
   list_del_init(&servicedPassenger->passengerList);

@@ -49,15 +49,21 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
   strcat(message, numToString);
 
   sprintf(numToString, "  Total Weight Load: %d.%d\n  Total Passenger Load: %d\n",
+      osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac, osMagicElv.totalPass);
+  /*
       findWeightWhole(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac),
       findWeightFrac(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac), osMagicElv.totalPass);
+      */
   strcat(message, numToString);
 
   strcat(message, "Floor data:\n");
   for(i = 0; i < 10; i++) {
     sprintf(numToString, "  Floor [%d]:\n    Total Weight Load: %d.%d\n",
+        i + 1, osMagicFloors[i].totalWeightWhole, osMagicFloors[i].totalWeightFrac);
+    /*
         i + 1, findWeightWhole(osMagicFloors[i].totalWeightWhole, osMagicFloors[i].totalWeightFrac),
         findWeightFrac(osMagicFloors[i].totalWeightWhole, osMagicFloors[i].totalWeightFrac));
+        */
     strcat(message, numToString);
 
     sprintf(numToString, "    Total Passenger Load: %d\n    Passengers Serviced: %d\n",
