@@ -19,10 +19,12 @@ int elevatorProcRelease(struct inode *sp_inode, struct file *sp_file);
 
 // Utility functions to convert our whole/frac to a number.5
 int findWeightWhole(int whole, int frac) {
-  return whole + (frac / 10);
+  return whole;
+  //return whole + (frac / 10);
 }
 int findWeightFrac(int whole, int frac) {
-  return frac % 10;
+  return frac;
+  //return frac % 10;
 }
 
 // Called when module is inserted.
@@ -56,15 +58,16 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
       osMagicElv.state, osMagicElv.currentFloor + 1, osMagicElv.destFloor + 1);
   strcat(message, numToString);
 
-  sprintf(numToString, "  Total Weight Load: %d\n  Total Passenger Load: %d.%d\n",
+  sprintf(numToString, "  Total Weight Load: %d.%d\n  Total Passenger Load: %d\n",
       findWeightWhole(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac),
       findWeightFrac(osMagicElv.totalWeightWhole, osMagicElv.totalWeightFrac), osMagicElv.totalPass);
   strcat(message, numToString);
 
   strcat(message, "Floor data:\n");
   for(i = 0; i < 10; i++) {
-    sprintf(numToString, "  Floor [%d]:\n    Total Weight Load: %d\n",
-        i + 1, osMagicFloors[i].totalWeightWhole);
+    sprintf(numToString, "  Floor [%d]:\n    Total Weight Load: %d.%d\n",
+        i + 1, findWeightWhole(osMagicFloors[i].totalWeightWhole, osMagicFloors[i].totalWeightFrac),
+        findWeightFrac(osMagicFloors[i].totalWeightWhole, osMagicFloors[i].totalWeightFrac));
     strcat(message, numToString);
 
     sprintf(numToString, "    Total Passenger Load: %d\n    Passengers Serviced: %d\n",

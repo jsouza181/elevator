@@ -75,7 +75,7 @@ Passenger createPassenger(int passengerType, int destFloor) {
       break;
     case 1:
       newPassenger.weightWhole = 0;
-      newPassenger.weightFrac = 1;
+      newPassenger.weightFrac = 5;
       newPassenger.size = 1;
       break;
     case 2:
