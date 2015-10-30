@@ -40,7 +40,7 @@ void elevatorProcRemove(void) {
 
 
 int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
-  char numToString[16]; // Used to add ints to the message
+  char numToString[64]; // Temp string used to add ints to the message
   int i;
 
   read_p = 1;
@@ -51,8 +51,6 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
       osMagicElv.state, osMagicElv.currentFloor, osMagicElv.destFloor);
   strcat(message, numToString);
 */
-  strcat(message, "\nFloor weights:\n");
-
   for(i = 0; i < 10; i++) {
     sprintf(numToString, "  Floor [%d]: %d\n", i + 1, osMagicFloors[i].totalWeight);
     strcat(message, numToString);

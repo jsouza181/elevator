@@ -15,8 +15,10 @@ long start_elevator(void) {
 
 extern long (*STUB_issue_request)(int,int,int);
 long issue_request(int passenger_type, int start_floor, int destination_floor) {
+  // Producer makes requests from 1-9, not 0-10
   --start_floor;
   --destination_floor;
+
   printk("New request: %d, %d => %d\n", passenger_type, start_floor, destination_floor);
 
   // Create a passenger, then add them to the start floor
