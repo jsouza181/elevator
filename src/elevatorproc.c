@@ -17,16 +17,6 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file);
 ssize_t elevatorProcRead(struct file *sp_file, char __user *buf, size_t size, loff_t *offset);
 int elevatorProcRelease(struct inode *sp_inode, struct file *sp_file);
 
-// Utility functions to convert our whole/frac to a number.5
-int findWeightWhole(int whole, int frac) {
-  return whole;
-  //return whole + (frac / 10);
-}
-int findWeightFrac(int whole, int frac) {
-  return frac;
-  //return frac % 10;
-}
-
 // Called when module is inserted.
 int elevatorProcCreate(void) {
   fops.open = elevatorProcOpen;

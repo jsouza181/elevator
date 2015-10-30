@@ -42,6 +42,10 @@ typedef struct elevator {
 extern Elevator osMagicElv;
 extern Floor osMagicFloors[10];
 
+// Utility functions
+int findWeightWhole(int whole, int frac);
+int findWeightFrac(int whole, int frac);
+
 // Floor functions
 void addToFloor(int floorNum, Passenger pgr);
 Passenger createPassenger(int passengerType, int destFloor);

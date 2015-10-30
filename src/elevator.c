@@ -34,7 +34,21 @@ void elevatorStop(void) {
   osMagicElv.state = 4;
 }
 
-// Floor functions
+/*
+ * Utility functions
+ */
+
+// Convert our whole/frac to a whole.5 or whole.0
+int findWeightWhole(int whole, int frac) {
+  return whole + (frac / 10);
+}
+int findWeightFrac(int whole, int frac) {
+  return frac % 10;
+}
+
+/*
+ * Floor functions
+ */
 
 void addToFloor(int floorNum, Passenger pgr) {
   PassengerNode *newPassengerNode;
@@ -93,7 +107,9 @@ Passenger createPassenger(int passengerType, int destFloor) {
   return newPassenger;
 }
 
-// Elevator functions
+/*
+ * Elevator functions
+ */
 
 void moveToFloor(int floorNum) {
   // Change status from IDLE to UP/Down
