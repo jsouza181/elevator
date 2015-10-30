@@ -2,6 +2,6 @@
 
 while [ 1 ]; do
 	clear
-	dmesg | tail
+	cat /proc/elevator
 	sleep 1
 done

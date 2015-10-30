@@ -49,12 +49,12 @@ int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
 /*
   sprintf(numToString, "  State: %d\n  Current Floor: %d\n  Next Floor:  %d\n",
       osMagicElv.state, osMagicElv.currentFloor, osMagicElv.destFloor);
-  strcat(message, numToString); 
+  strcat(message, numToString);
 */
   strcat(message, "\nFloor weights:\n");
 
   for(i = 0; i < 10; i++) {
-    sprintf(numToString, "  Floor [%d]: %d\n", i, osMagicFloors[i].totalWeight);
+    sprintf(numToString, "  Floor [%d]: %d\n", i + 1, osMagicFloors[i].totalWeight);
     strcat(message, numToString);
   }
 

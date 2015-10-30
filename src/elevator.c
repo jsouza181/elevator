@@ -17,6 +17,7 @@ void elevatorStart(void) {
   osMagicElv.weightLoad = 0;
   osMagicElv.maxWeight = 8;
   osMagicElv.maxPass = 8;
+  INIT_LIST_HEAD(&osMagicElv.elvPassengers);
 
   // Initialize floors
   for(i = 0; i < 10; i++) {
@@ -24,8 +25,6 @@ void elevatorStart(void) {
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
-    //osMagicFloors[i].floorPassengers.next = NULL;
-    //osMagicFloors[i].floorPassengers.prev = NULL;
   }
 }
 
@@ -48,9 +47,6 @@ void addToFloor(int floorNum, Passenger pgr) {
   }
 
   newPassengerNode->passenger = pgr;
-  //newPassengerNode->passengerList.next = NULL;
-  //newPassengerNode->passengerList.prev = NULL;
-
 
   printk("TEST before adding to floor's passengers");
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
