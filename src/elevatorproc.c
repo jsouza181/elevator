@@ -40,22 +40,30 @@ void elevatorProcRemove(void) {
 
 
 int elevatorProcOpen(struct inode *sp_inode, struct file *sp_file) {
-  char numToString[64]; // Temp string used to add ints to the message
+  char numToString[128]; // Temp string used to add ints to the message
   int i;
 
   read_p = 1;
 
   strcpy(message, "Elevator data:\n");
-/*
-  sprintf(numToString, "  State: %d\n  Current Floor: %d\n  Next Floor:  %d\n",
-      osMagicElv.state, osMagicElv.currentFloor, osMagicElv.destFloor);
+  sprintf(numToString, "  State: %d\n  Current Floor: %d\n  Next Floor: %d\n",
+      osMagicElv.state, osMagicElv.currentFloor + 1, osMagicElv.destFloor + 1);
   strcat(message, numToString);
-*/
+
+  sprintf(numToString, "  CurrentPassLoad: %d\n  CurrentWeightLoad: %d\n",
+      osMagicElv.passLoad, osMagicElv.weightLoad);
+  strcat(message, numToString);
+
+  strcat(message, "Floor data:\n");
   for(i = 0; i < 10; i++) {
-    sprintf(numToString, "  Floor [%d]: %d\n", i + 1, osMagicFloors[i].totalWeight);
+    sprintf(numToString, "  Floor [%d]:\n    Total Weight Load: %d\n",
+        i + 1, osMagicFloors[i].totalWeight);
+    strcat(message, numToString);
+
+    sprintf(numToString, "    Total Passenger Load: %d\n    Passengers Serviced: %d\n",
+        osMagicFloors[i].totalPass, osMagicFloors[i].totalServed);
     strcat(message, numToString);
   }
-
   return 0;
 }
 ssize_t elevatorProcRead(struct file *sp_file, char __user *buf, size_t size, loff_t *offset) {

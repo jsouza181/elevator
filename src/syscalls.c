@@ -15,6 +15,13 @@ long start_elevator(void) {
 
 extern long (*STUB_issue_request)(int,int,int);
 long issue_request(int passenger_type, int start_floor, int destination_floor) {
+
+  // Make sure the passenger type is valid
+  if(passenger_type < 0 || passenger_type > 3) {
+    printk("Invalid request.\n");
+    return 1;
+  }
+
   // Producer makes requests from 1-9, not 0-10
   --start_floor;
   --destination_floor;
@@ -22,16 +29,13 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
   printk("New request: %d, %d => %d\n", passenger_type, start_floor, destination_floor);
 
   // Create a passenger, then add them to the start floor
-  //addToFloor(start_floor, createPassenger(passenger_type, destination_floor));
   addToFloor(start_floor, createPassenger(passenger_type, destination_floor));
 
   // Send elevator to the new request if it is idle
-/*
   if(osMagicElv.state == 0) {
     moveToFloor(start_floor);
     loadPassengers();
   }
-*/
 
   return 0;
 }

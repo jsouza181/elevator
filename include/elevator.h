@@ -9,7 +9,7 @@
 
 typedef struct passenger {
   int destination;
-  int weight;
+  float weight;
   int size;
 } Passenger;
 
@@ -19,7 +19,7 @@ typedef struct passengerNode {
 } PassengerNode;
 
 typedef struct floor {
-  int totalWeight;
+  float totalWeight;
   int totalPass;
   int totalServed;
   struct list_head floorPassengers;
@@ -30,8 +30,8 @@ typedef struct elevator {
   int currentFloor;
   int destFloor;
   int passLoad;
-  int weightLoad; //change to double - kernel C limitation?
-  int maxWeight;
+  float weightLoad; //change to double - kernel C limitation?
+  float maxWeight;
   int maxPass;
   struct list_head elvPassengers;
 } Elevator;
@@ -48,6 +48,6 @@ void elevatorStart(void);
 void elevatorStop(void);
 void moveToFloor(int floorNum);
 void loadPassengers(void);
-void unloadPassengers(void); 
+void unloadPassengers(void);
 
 #endif

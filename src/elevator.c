@@ -11,7 +11,7 @@ void elevatorStart(void) {
 
   // Initialize elevator
   osMagicElv.state = 0;
-  osMagicElv.currentFloor = 1;
+  osMagicElv.currentFloor = 0;
   osMagicElv.destFloor = 0;
   osMagicElv.passLoad = 0;
   osMagicElv.weightLoad = 0;
@@ -46,41 +46,43 @@ void addToFloor(int floorNum, Passenger pgr) {
     return;
   }
 
-  newPassengerNode->passenger = pgr;
+  newPassengerNode->passenger.destination = pgr.destination;
+  newPassengerNode->passenger.weight = pgr.weight;
+  newPassengerNode->passenger.size = pgr.size;
 
   printk("TEST before adding to floor's passengers");
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
   printk("TEST after adding to floor's passengers");
 
-  osMagicFloors[floorNum].totalWeight += pgr.weight;
-  osMagicFloors[floorNum].totalPass += pgr.size;
+  osMagicFloors[floorNum].totalWeight += newPassengerNode->passenger.weight;
+  osMagicFloors[floorNum].totalPass += newPassengerNode->passenger.size;
 }
 
 Passenger createPassenger(int passengerType, int destFloor) {
-  Passenger newPassengerNode;
+  Passenger newPassenger;
 
-  newPassengerNode.destination = destFloor;
+  newPassenger.destination = destFloor;
 
   switch(passengerType) {
     case 0:
-      newPassengerNode.weight = 1;
-      newPassengerNode.size = 1;
+      newPassenger.weight = 1;
+      newPassenger.size = 1;
       break;
     case 1:
-      newPassengerNode.weight = 0.5;
-      newPassengerNode.size = 1;
+      newPassenger.weight = 1/2;
+      newPassenger.size = 1;
       break;
     case 2:
-      newPassengerNode.weight = 2;
-      newPassengerNode.size = 2;
+      newPassenger.weight = 2;
+      newPassenger.size = 2;
       break;
     case 3:
-      newPassengerNode.weight = 2;
-      newPassengerNode.size = 1;
+      newPassenger.weight = 2;
+      newPassenger.size = 1;
       break;
   }
 
-  return newPassengerNode;
+  return newPassenger;
 }
 
 // Elevator functions
@@ -88,7 +90,7 @@ Passenger createPassenger(int passengerType, int destFloor) {
 void moveToFloor(int floorNum) {
   // Change status from IDLE to UP/Down
   osMagicElv.state = 1;
-  ssleep(4);
+  ssleep(2);
   osMagicElv.currentFloor = floorNum;
 }
 
