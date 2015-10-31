@@ -24,15 +24,19 @@ __attribute__((section("__versions"))) = {
 	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
 	{ 0x1f3447a5, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
 	{ 0x91715312, __VMLINUX_SYMBOL_STR(sprintf) },
+	{ 0xbb04eae1, __VMLINUX_SYMBOL_STR(kthread_create_on_node) },
 	{ 0x343a1a8, __VMLINUX_SYMBOL_STR(__list_add) },
 	{ 0x811606d6, __VMLINUX_SYMBOL_STR(STUB_issue_request) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
+	{ 0x507e09c4, __VMLINUX_SYMBOL_STR(kthread_stop) },
 	{ 0x521445b, __VMLINUX_SYMBOL_STR(list_del) },
 	{ 0x61651be, __VMLINUX_SYMBOL_STR(strcat) },
 	{ 0xdf9b386b, __VMLINUX_SYMBOL_STR(STUB_stop_elevator) },
 	{ 0xdb7305a1, __VMLINUX_SYMBOL_STR(__stack_chk_fail) },
+	{ 0xdbe7d4fd, __VMLINUX_SYMBOL_STR(wake_up_process) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 	{ 0x280f1eb0, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
+	{ 0xb3f7646e, __VMLINUX_SYMBOL_STR(kthread_should_stop) },
 	{ 0xbc8af77f, __VMLINUX_SYMBOL_STR(proc_create_data) },
 	{ 0x37a0cba, __VMLINUX_SYMBOL_STR(kfree) },
 	{ 0x69acdf38, __VMLINUX_SYMBOL_STR(memcpy) },
@@ -44,4 +48,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "9AF0C2E508BC2FEC635D1D1");
+MODULE_INFO(srcversion, "483B98A141F116FE133820E");
