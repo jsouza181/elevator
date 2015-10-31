@@ -4,7 +4,7 @@
 
 Elevator osMagicElv;
 Floor osMagicFloors[];
-
+struct list_head requestQueue;
 
 // Initialize elevator and floors
 void elevatorStart(void) {
@@ -29,6 +29,10 @@ void elevatorStart(void) {
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
   }
+
+  // Initialize queue of floors to visit
+  INIT_LIST_HEAD(&requestQueue);
+
 }
 
 void elevatorStop(void) {

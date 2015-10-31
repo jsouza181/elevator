@@ -35,35 +35,34 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
   // Add the passenger's destination to the list of scheduled requests
   scheduleRequest(destination_floor);
 
-  // Send elevator to the new request if it is idle
-  if(osMagicElv.state == 0) {
-    moveToFloor(start_floor);
-    loadPassengers();
-  }
-
   return 0;
 }
 
 extern long (*STUB_stop_elevator)(void);
 long stop_elevator(void) {
   struct list_head *temp, *ptr;
-  PassengerNode *item;
+  PassengerNode *passenger;
+  RequestNode *request;
   int i = 0;
 
   printk("Stopping elevator\n");
 
   printk("deallocating elevator\n");
-
   if(!list_empty(&osMagicElv.elvPassengers)) {
-      printk("before looping\n");
     list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers) {
-      printk("entered loop\n");
-  		item = list_entry(ptr, PassengerNode, passengerList);
-      printk("assigned node\n");
+  		passenger = list_entry(ptr, PassengerNode, passengerList);
   		list_del(ptr);
-      printk("deleted pointer\n");
-  		kfree(item);
+  		kfree(passenger);
   	}
+  }
+
+  printk("deallocating request queue\n");
+  if(!list_empty(&requestQueue)) {
+    list_for_each_safe(ptr, temp, &requestQueue) {
+      request = list_entry(ptr, RequestNode, requestList);
+      list_del(ptr);
+      kfree(request);
+    }
   }
 
   for(i = 0; i < 10; ++i) {
@@ -72,9 +71,9 @@ long stop_elevator(void) {
       continue;
 
     list_for_each_safe(ptr, temp, &osMagicFloors[i].floorPassengers) {
-  		item = list_entry(ptr, PassengerNode, passengerList);
+  		passenger = list_entry(ptr, PassengerNode, passengerList);
   		list_del(ptr);
-  		kfree(item);
+  		kfree(passenger);
   	}
   }
 

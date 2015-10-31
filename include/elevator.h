@@ -20,6 +20,11 @@ typedef struct passengerNode {
   Passenger passenger;
 } PassengerNode;
 
+typedef struct requestNode {
+  struct list_head requestList;
+  int floorNum;
+} RequestNode;
+
 typedef struct floor {
   int totalWeightWhole;
   int totalWeightFrac;
@@ -42,6 +47,8 @@ typedef struct elevator {
 
 extern Elevator osMagicElv;
 extern Floor osMagicFloors[10];
+// Queue of floors that the elevator will visit in order
+extern struct list_head requestQueue;
 
 // Utility functions
 int findWeightWhole(int whole, int frac);
