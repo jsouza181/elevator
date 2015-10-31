@@ -19,35 +19,42 @@ void scheduleRequest(int requestFloor) {
   printk("newRequest added to request queue\n");
 }
 
-int serviceRequests(void *data) {
-  //RequestQueueItem *nextFloorToVisit;
-
-  while(!kthread_should_stop()) {
+    /*
+    ssleep(4);
     if(list_empty(&requestQueue))
       printk("Checking List: list is empty\n");
     else
       printk("Checking List: list is not empty\n");
+      */
+int serviceRequests(void *data) {
+  RequestNode *nextFloorToVisit;
 
-    ssleep(8);
+  while(!kthread_should_stop()) {
+    if(!list_empty(&requestQueue)) { // If there is a request to service
+      nextFloorToVisit = list_first_entry(&requestQueue, RequestNode, requestList);
+
+      // Delete the request
+      // list_del_init(&nextFloorToVisit->requestList);
+      // kfree(nextFloorToVisit);
+    }
+    printk("IM STILL ALIVE!!!\n");
+    ssleep(2);
   }
+  return 0;
+}
+    /*
 
-  /*
-    if(!list_empty(&requestQueue)) {
-      // Check the head of the queue? (valid direction?)
-      nextFloorToVisit = list_first_entry(&requestQueue, RequestQueueItem, list);
-
-      // Move elevator to this request's current floor then service the floor
-      moveToFloor(nextFloorToVisit->floorNum);
-      unloadPassengers();
-      loadPassengers();
-
-      // Delete the head
-      list_del_init(&nextFloorToVisit->list);
-      kfree(nextFloorToVisit);
+      printk("freeing node\n");
     }
     else // No requests left, go IDLE
       osMagicElv.state = IDLE;
   }
-  */
-  return 0;
+    return 0;
 }
+*/
+/*
+      // Move elevator to this request's current floor then service the floor
+      moveToFloor(nextFloorToVisit->floorNum);
+      //unloadPassengers();
+      //loadPassengers();
+*/
