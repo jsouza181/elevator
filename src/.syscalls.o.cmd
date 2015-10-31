@@ -518,6 +518,7 @@ deps_/usr/src/test_kernel/elevator/src/syscalls.o := \
   include/linux/kasan.h \
     $(wildcard include/config/kasan/shadow/offset.h) \
   /usr/src/test_kernel/elevator/include/elevator.h \
+  /usr/src/test_kernel/elevator/include/scheduler.h \
 
 /usr/src/test_kernel/elevator/src/syscalls.o: $(deps_/usr/src/test_kernel/elevator/src/syscalls.o)
 

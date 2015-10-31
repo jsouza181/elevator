@@ -2,6 +2,7 @@
 #include <linux/printk.h>
 #include <linux/slab.h>
 #include "elevator.h"
+#include "scheduler.h"
 
 extern long (*STUB_start_elevator)(void);
 long start_elevator(void) {
@@ -30,6 +31,9 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
 
   // Create a passenger, then add them to the start floor
   addToFloor(start_floor, createPassenger(passenger_type, destination_floor));
+
+  // Add the passenger's destination to the list of scheduled requests
+  scheduleRequest(destination_floor);
 
   // Send elevator to the new request if it is idle
   if(osMagicElv.state == 0) {

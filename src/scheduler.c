@@ -1,50 +1,53 @@
 #include <linux/init.h>
+#include <linux/kthread.h>
 #include <linux/module.h>
 #include <linux/list.h>
 #include <linux/slab.h>
 #include "elevator.h"
 
 // Queue of floors that the elevator will visit in order
-static struct list_head floorQueue;
+static struct list_head requestQueue;
 
-typedef struct floorQueueItem {
+typedef struct requestQueueItem {
   struct list_head list;
   int floorNum;
-} FloorQueueItem;
+} RequestQueueItem;
 
 // Add passenger's desired floor to the list of scheduled floors
-void scheduleRequest(Passenger pgr) {
-  FloorQueueItem *newScheduledFloor;
+void scheduleRequest(int requestFloor) {
+  RequestQueueItem *newRequest;
 
-  // Add the floor the new request is on to the queue of floors to visit.
-  newScheduledFloor = kmalloc(sizeof(FloorQueueItem), __GFP_WAIT | __GFP_IO | __GFP_FS);
-  newScheduledFloor->floorNum = pgr.destination;
-  list_add_tail(&newScheduledFloor->list, &floorQueue);
+  // Add the new request floor to the queue of floors to visit.
+  newRequest = kmalloc(sizeof(RequestQueueItem), __GFP_WAIT | __GFP_IO | __GFP_FS);
+  newRequest->floorNum = requestFloor;
+  list_add_tail(&newRequest->list, &requestQueue);
 }
 
-void serviceFloors(void) {
-  printk("Scheduled floor queue status:  %d\n", list_empty(&floorQueue));
-/*
-  FloorQueueItem *nextFloorToVisit;
+int serviceRequests(void *data) {
+  RequestQueueItem *nextFloorToVisit;
 
-  while(osMagicElv.state != 4) { // While the elevator has not been STOPPED
-    printk("list empty is %d\n", list_empty(&floorQueue));
+  while(!kthread_should_stop()) {
 
-    if(!list_empty(&floorQueue)) {
+    if(list_empty(&requestQueue))
+      printk("Checking List: list is empty\n");
+    else
+      printk("Checking List: list is not empty\n");
+
+    if(!list_empty(&requestQueue)) {
       // Check the head of the queue? (valid direction?)
-      nextFloorToVisit = list_first_entry(&floorQueue, FloorQueueItem, list);
+      nextFloorToVisit = list_first_entry(&requestQueue, RequestQueueItem, list);
 
       // Move elevator to this request's current floor then service the floor
       moveToFloor(nextFloorToVisit->floorNum);
       unloadPassengers();
       loadPassengers();
 
-      // Delete the head 
+      // Delete the head
       list_del_init(&nextFloorToVisit->list);
       kfree(nextFloorToVisit);
     }
     else // No requests left, go IDLE
       osMagicElv.state = IDLE;
   }
-  */
+  return 0;
 }

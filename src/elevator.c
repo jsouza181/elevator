@@ -5,6 +5,7 @@
 Elevator osMagicElv;
 Floor osMagicFloors[];
 
+
 // Initialize elevator and floors
 void elevatorStart(void) {
   int i;
@@ -156,6 +157,10 @@ Passenger createPassenger(int passengerType, int destFloor) {
  * Elevator functions
  */
 
+// Need a threaded function to continually check for when floors become populated
+// Only runs when elevator is in IDLE state
+
+// Threaded movement function. Ordered to stop when elevator is idle.
 void moveToFloor(int floorNum) {
   // Change status from IDLE to UP/Down
   osMagicElv.state = 1;
