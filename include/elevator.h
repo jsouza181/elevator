@@ -8,6 +8,7 @@
 #define STOPPED 4
 
 typedef struct passenger {
+  int passengerType;
   int destination;
   int weightWhole;
   int weightFrac;

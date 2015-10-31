@@ -51,6 +51,7 @@ int findWeightFrac(int frac) {
 int willItFit(int passengerType) {
   int elvWhole = osMagicElv.totalWeightWhole;
   int elvFrac = osMagicElv.totalWeightFrac;
+  int elvPass = osMagicElv.totalPass;
 
   // Check for weight overloads. These only occur at 6.5 and greater
   if(elvWhole >= 8) { // Already full
@@ -74,6 +75,14 @@ int willItFit(int passengerType) {
   }
 
   // Check for size differences.
+  if(elvPass >= 8) { // Already full
+    return 0;
+  }
+  else if(elvPass == 7) {
+    if(passengerType == 2)
+      return 0;
+  }
+
   return 1;
 }
 
@@ -93,6 +102,7 @@ void addToFloor(int floorNum, Passenger pgr) {
     return;
   }
 
+  newPassengerNode->passenger.passengerType = pgr.passengerType;
   newPassengerNode->passenger.destination = pgr.destination;
   newPassengerNode->passenger.weightWhole = pgr.weightWhole;
   newPassengerNode->passenger.weightFrac = pgr.weightFrac;
@@ -114,21 +124,25 @@ Passenger createPassenger(int passengerType, int destFloor) {
 
   switch(passengerType) {
     case 0:
+      passengerType = 0;
       newPassenger.weightWhole = 1;
       newPassenger.weightFrac = 0;
       newPassenger.size = 1;
       break;
     case 1:
+      passengerType = 1;
       newPassenger.weightWhole = 0;
       newPassenger.weightFrac = 5;
       newPassenger.size = 1;
       break;
     case 2:
+      passengerType = 2;
       newPassenger.weightWhole = 2;
       newPassenger.weightFrac = 0;
       newPassenger.size = 2;
       break;
     case 3:
+      passengerType = 3;
       newPassenger.weightWhole = 2;
       newPassenger.weightFrac = 0;
       newPassenger.size = 1;
@@ -152,24 +166,28 @@ void moveToFloor(int floorNum) {
 // Load appropriate passengers from elevator's current floor until capacity
 void loadPassengers(void) {
   PassengerNode *newPassengerNode;
-
   newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
-	PassengerNode, passengerList);
+      PassengerNode, passengerList);
 
-  // Update floor data
-  osMagicFloors[osMagicElv.currentFloor].totalServed++;
-  osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
-      findWeightWhole(newPassengerNode->passenger.weightWhole, newPassengerNode->passenger.weightFrac);
-  osMagicFloors[osMagicElv.currentFloor].totalWeightFrac -=
-      findWeightFrac(newPassengerNode->passenger.weightFrac);
-  osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassengerNode->passenger.size;
-  // Update elevator data
-  osMagicElv.totalWeightWhole += findWeightWhole(newPassengerNode->passenger.weightWhole,
-      newPassengerNode->passenger.weightFrac);
-  osMagicElv.totalWeightFrac += findWeightFrac(newPassengerNode->passenger.weightFrac);
-  osMagicElv.totalPass += newPassengerNode->passenger.size;
+  // Loop until the elevator is full or the floor is empty
+  while(willItFit(newPassengerNode->passenger.passengerType) || list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers)) {
+    // Update floor data
+    osMagicFloors[osMagicElv.currentFloor].totalServed++;
+    osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
+        findWeightWhole(newPassengerNode->passenger.weightWhole, newPassengerNode->passenger.weightFrac);
+    osMagicFloors[osMagicElv.currentFloor].totalWeightFrac -=
+        findWeightFrac(newPassengerNode->passenger.weightFrac);
+    osMagicFloors[osMagicElv.currentFloor].totalPass-= newPassengerNode->passenger.size;
+    // Update elevator data
+    osMagicElv.totalWeightWhole += findWeightWhole(newPassengerNode->passenger.weightWhole,
+        newPassengerNode->passenger.weightFrac);
+    osMagicElv.totalWeightFrac += findWeightFrac(newPassengerNode->passenger.weightFrac);
+    osMagicElv.totalPass += newPassengerNode->passenger.size;
 
-  list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
+    list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
+    newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
+        PassengerNode, passengerList);
+  }
 }
 
 // Unload passengers whose destination is the current floor
