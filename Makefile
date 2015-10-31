@@ -21,8 +21,8 @@ default:
 
 test: teststart testadd teststop
 
-teststart: insert start 
-insert: 
+teststart: insert start
+insert:
 	sudo insmod elevator.ko
 start:
 	drivers/consumer.x --start
@@ -31,7 +31,7 @@ testadd:
 	drivers/producer.x
 
 testadd10:
-	for i in {1 2 3 4 5 6 7 8 9 10}; do drivers/producer.x; done;
+	for i in `seq 1 10`; do drivers/producer.x; sleep 1; done;
 
 teststop: stop remove
 stop:
