@@ -169,8 +169,8 @@ void loadPassengers(void) {
   newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
       PassengerNode, passengerList);
 
-  // Loop until the elevator is full or the floor is empty
-  while(willItFit(newPassengerNode->passenger.passengerType) || list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers)) {
+  // Loop while the next passenger will fit AND the list is not empty
+  while(willItFit(newPassengerNode->passenger.passengerType) && !list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers)) {
     // Update floor data
     osMagicFloors[osMagicElv.currentFloor].totalServed++;
     osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
