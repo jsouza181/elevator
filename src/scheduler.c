@@ -28,14 +28,15 @@ void scheduleRequest(int requestFloor) {
       */
 int serviceRequests(void *data) {
   RequestNode *nextFloorToVisit;
+  ssleep(1);
 
   while(!kthread_should_stop()) {
     if(!list_empty(&requestQueue)) { // If there is a request to service
       nextFloorToVisit = list_first_entry(&requestQueue, RequestNode, requestList);
 
       // Delete the request
-      // list_del_init(&nextFloorToVisit->requestList);
-      // kfree(nextFloorToVisit);
+      list_del_init(&nextFloorToVisit->requestList);
+      kfree(nextFloorToVisit);
     }
     printk("IM STILL ALIVE!!!\n");
     ssleep(2);
