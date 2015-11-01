@@ -10,7 +10,7 @@
 #include "scheduler.h"
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Jason Souza, ");
+MODULE_AUTHOR("Jason Souza, Ricardo Castilla, Philip Scott, Conor Stephen");
 MODULE_DESCRIPTION("Simple module designed to illustrate scheduling");
 
 // Thread to check the floor queue for floors to visit

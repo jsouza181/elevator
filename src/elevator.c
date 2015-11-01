@@ -221,6 +221,7 @@ void loadPassengers(void) {
       PassengerNode, passengerList);
 
   // Loop while the next passenger will fit AND the list is not empty
+  // start a mutex here
   while(!list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers) &&
       willItFit(newPassengerNode->passenger.passengerType) &&
       osMagicElv.direction == newPassengerNode->passenger.direction) {
@@ -241,7 +242,8 @@ void loadPassengers(void) {
     list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
     newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
         PassengerNode, passengerList);
-  }
+  } // while
+  // end the mutex here
 }
 
 // Unload passengers whose destination is the current floor
@@ -252,6 +254,8 @@ void unloadPassengers(void) {
   if(list_empty(&osMagicElv.elvPassengers))
     return;
 
+  // check that the serviced Passenger is not NULL
+  // start a mutex here
   list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers)
   {
      servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
@@ -265,6 +269,7 @@ void unloadPassengers(void) {
 
      list_del(ptr);
      kfree(servicedPassenger);
+     // end the mutex here
      }
   }
 
