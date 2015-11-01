@@ -19,13 +19,6 @@ void scheduleRequest(int requestFloor) {
   printk("newRequest added to request queue\n");
 }
 
-    /*
-    ssleep(4);
-    if(list_empty(&requestQueue))
-      printk("Checking List: list is empty\n");
-    else
-      printk("Checking List: list is not empty\n");
-      */
 int serviceRequests(void *data) {
   RequestNode *nextFloorToVisit;
   ssleep(1);
@@ -43,19 +36,3 @@ int serviceRequests(void *data) {
   }
   return 0;
 }
-    /*
-
-      printk("freeing node\n");
-    }
-    else // No requests left, go IDLE
-      osMagicElv.state = IDLE;
-  }
-    return 0;
-}
-*/
-/*
-      // Move elevator to this request's current floor then service the floor
-      moveToFloor(nextFloorToVisit->floorNum);
-      //unloadPassengers();
-      //loadPassengers();
-*/

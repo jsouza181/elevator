@@ -183,7 +183,9 @@ void loadPassengers(void) {
       PassengerNode, passengerList);
 
   // Loop while the next passenger will fit AND the list is not empty
-  while(willItFit(newPassengerNode->passenger.passengerType) && !list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers)) {
+  // start a mutex here
+  while(willItFit(newPassengerNode->passenger.passengerType) &&
+        !list_empty(&osMagicFloors[osMagicElv.currentFloor].floorPassengers)) {
     // Update floor data
     osMagicFloors[osMagicElv.currentFloor].totalServed++;
     osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
@@ -200,7 +202,8 @@ void loadPassengers(void) {
     list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
     newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
         PassengerNode, passengerList);
-  }
+  } // while
+  // end the mutex here
 }
 
 // Unload passengers whose destination is the current floor
@@ -209,6 +212,8 @@ void unloadPassengers(void) {
 
   servicedPassenger = list_first_entry(&osMagicElv.elvPassengers, PassengerNode, passengerList);
 
+  // check that the serviced Passenger is not NULL
+  // start a mutex here
   osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
       servicedPassenger->passenger.weightFrac);
   osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
@@ -216,4 +221,6 @@ void unloadPassengers(void) {
 
   list_del_init(&servicedPassenger->passengerList);
   kfree(servicedPassenger);
+
+  // end the mutex here
 }
