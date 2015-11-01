@@ -34,8 +34,8 @@ int serviceRequests(void *data) {
       nextFloorToVisit = list_first_entry(&requestQueue, RequestNode, requestList);
 
       // Delete the request
-      // list_del_init(&nextFloorToVisit->requestList);
-      // kfree(nextFloorToVisit);
+      list_del_init(&nextFloorToVisit->requestList);
+      kfree(nextFloorToVisit);
     }
     printk("IM STILL ALIVE!!!\n");
     ssleep(2);
