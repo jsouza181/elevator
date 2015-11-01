@@ -1,11 +1,35 @@
 #ifndef __ELEVATOR_ELEVATOR_H
 #define __ELEVATOR_ELEVATOR_H
 
+/* elevator characteristics */
+#define MAX_FLOOR 10
+#define MAX_PASS 8
+#define MAX_WEIGHT 8
+/* elevator state definitions */
 #define IDLE 0
 #define UP 1
 #define DOWN 2
 #define LOADING 3
 #define STOPPED 4
+/* passenger type definitions */
+#define ADULT 0
+#define CHILD 1
+#define BELLHOP 2
+#define ROOM_SERVICE 3
+/* weight definitions */
+#define ADULT_WEIGHT_WHOLE 1
+#define CHILD_WEIGHT_WHOLE 1
+#define BELLHOP_WEIGHT_WHOLE 2
+#define ROOM_SERVICE_WEIGHT_WHOLE 2
+#define ADULT_WEIGHT_FRAC 0
+#define CHILD_WEIGHT_FRAC 5
+#define BELLHOP_WEIGHT_FRAC 0
+#define ROOM_SERVICE_WEIGHT_FRAC 0
+/* size definitions */
+#define ADULT_SIZE 1
+#define CHILD_SIZE 1
+#define BELLHOP_SIZE 2
+#define ROOM_SERVICE_SIZE 1
 
 typedef struct passenger {
   int passengerType;
@@ -46,7 +70,7 @@ typedef struct elevator {
 } Elevator;
 
 extern Elevator osMagicElv;
-extern Floor osMagicFloors[10];
+extern Floor osMagicFloors[MAX_FLOOR];
 // Queue of floors that the elevator will visit in order
 extern struct list_head requestQueue;
 

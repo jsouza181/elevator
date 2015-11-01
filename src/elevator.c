@@ -17,12 +17,12 @@ void elevatorStart(void) {
   osMagicElv.totalPass = 0;
   osMagicElv.totalWeightWhole = 0;
   osMagicElv.totalWeightFrac = 0;
-  osMagicElv.maxWeight = 8;
-  osMagicElv.maxPass = 8;
+  osMagicElv.maxWeight = MAX_WEIGHT;
+  osMagicElv.maxPass = MAX_PASS;
   INIT_LIST_HEAD(&osMagicElv.elvPassengers);
 
   // Initialize floors
-  for(i = 0; i < 10; i++) {
+  for(i = 0; i < MAX_FLOOR; i++) {
     osMagicFloors[i].totalWeightWhole = 0;
     osMagicFloors[i].totalWeightFrac = 0;
     osMagicFloors[i].totalPass = 0;
@@ -36,7 +36,7 @@ void elevatorStart(void) {
 }
 
 void elevatorStop(void) {
-  osMagicElv.state = 4;
+  osMagicElv.state = STOPPED;
 }
 
 /*
@@ -59,32 +59,32 @@ int willItFit(int passengerType) {
   int elvPass = osMagicElv.totalPass;
 
   // Check for weight overloads. These only occur at 6.5 and greater
-  if(elvWhole >= 8) { // Already full
+  if(elvWhole >= MAX_WEIGHT) { // Already full
     return 0;
   }
-  else if(elvWhole == 7) {
+  else if(elvWhole == MAX_WEIGHT - 1) {
     if(elvFrac == 5) { // 7.5
-      if(passengerType != 1) // Only a child can fit
+      if(passengerType != CHILD) // Only a child can fit
         return 0;
     }
     else { // 7.0
-      if(passengerType >= 2) // Staff will not fit
+      if(passengerType >= BELLHOP) // Staff will not fit
         return 0;
     }
   }
-  else if(elvWhole == 6) {
+  else if(elvWhole == MAX_WEIGHT - 2) {
     if(elvFrac == 5) { // 6.5
-      if(passengerType >= 2) // Staff will not fit
+      if(passengerType >= BELLHOP) // Staff will not fit
         return 0;
     }
   }
 
   // Check for size differences.
-  if(elvPass >= 8) { // Already full
+  if(elvPass >= MAX_PASS) { // Already full
     return 0;
   }
-  else if(elvPass == 7) {
-    if(passengerType == 2)
+  else if(elvPass == MAX_PASS - 1) {
+    if(passengerType == BELLHOP)
       return 0;
   }
 
@@ -128,29 +128,29 @@ Passenger createPassenger(int passengerType, int destFloor) {
   newPassenger.destination = destFloor;
 
   switch(passengerType) {
-    case 0:
-      passengerType = 0;
-      newPassenger.weightWhole = 1;
-      newPassenger.weightFrac = 0;
-      newPassenger.size = 1;
+    case ADULT:
+      passengerType = ADULT;
+      newPassenger.weightWhole = ADULT_WEIGHT_WHOLE;
+      newPassenger.weightFrac = ADULT_WEIGHT_FRAC;
+      newPassenger.size = ADULT_SIZE;
       break;
-    case 1:
-      passengerType = 1;
-      newPassenger.weightWhole = 0;
-      newPassenger.weightFrac = 5;
-      newPassenger.size = 1;
+    case CHILD:
+      passengerType = CHILD;
+      newPassenger.weightWhole = CHILD_WEIGHT_WHOLE;
+      newPassenger.weightFrac = CHILD_WEIGHT_FRAC;
+      newPassenger.size = CHILD_SIZE;
       break;
-    case 2:
-      passengerType = 2;
-      newPassenger.weightWhole = 2;
-      newPassenger.weightFrac = 0;
-      newPassenger.size = 2;
+    case BELLHOP:
+      passengerType = BELLHOP;
+      newPassenger.weightWhole = BELLHOP_WEIGHT_WHOLE;
+      newPassenger.weightFrac = BELLHOP_WEIGHT_FRAC;
+      newPassenger.size = BELLHOP_SIZE;
       break;
-    case 3:
-      passengerType = 3;
-      newPassenger.weightWhole = 2;
-      newPassenger.weightFrac = 0;
-      newPassenger.size = 1;
+    case ROOM_SERVICE:
+      passengerType = ROOM_SERVICE;
+      newPassenger.weightWhole = ROOM_SERVICE_WEIGHT_WHOLE;
+      newPassenger.weightFrac = ROOM_SERVICE_WEIGHT_FRAC;
+      newPassenger.size = ROOM_SERVICE_SIZE;
       break;
   }
 
@@ -166,8 +166,12 @@ Passenger createPassenger(int passengerType, int destFloor) {
 
 // Threaded movement function. Ordered to stop when elevator is idle.
 void moveToFloor(int floorNum) {
-  // Change status from IDLE to UP/Down
-  osMagicElv.state = 1;
+  if (osMagicElv.currentFloor < floorNum) {
+    osMagicElv.state = DOWN;
+  }
+  else {
+    osMagicElv.state = UP;
+  }
   ssleep(2);
   osMagicElv.currentFloor = floorNum;
 }
