@@ -18,7 +18,7 @@ extern long (*STUB_issue_request)(int,int,int);
 long issue_request(int passenger_type, int start_floor, int destination_floor) {
 
   // Make sure the passenger type is valid
-  if(passenger_type < 0 || passenger_type > 3) {
+  if(passenger_type < ADULT || passenger_type > ROOM_SERVICE) {
     printk("Invalid request.\n");
     return 1;
   }
@@ -65,7 +65,7 @@ long stop_elevator(void) {
     }
   }
 
-  for(i = 0; i < 10; ++i) {
+  for(i = 0; i < MAX_FLOOR; ++i) {
     printk("deallocating floors\n");
     if(list_empty(&osMagicFloors[i].floorPassengers))
       continue;
