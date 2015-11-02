@@ -28,10 +28,6 @@ Assumptions
 System calls
 ============================
 
-
-
-Problems
-============================
 -
 
 Known Bugs

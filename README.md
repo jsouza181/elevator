@@ -96,3 +96,5 @@ $> make teststop
 
 * Fractoinal numbers are not counted correctly sometimes, which causes
     the elevator to carry more weight than allowed
+* Module hangs (dealocks?) when the elevator has people inside and is stopped.
+    Fixed by doing sudo rmmod elevator
