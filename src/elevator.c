@@ -7,7 +7,9 @@ Elevator osMagicElv;
 Floor osMagicFloors[];
 struct mutex floor_mutex;
 
-// Initialize elevator and floors
+/* Initialization and Deallocation functions */
+
+// Initialize elevator and floors.
 void elevatorInit(void) {
   int i;
 
@@ -15,7 +17,7 @@ void elevatorInit(void) {
   osMagicElv.state = IDLE;
   osMagicElv.direction = UP;
   osMagicElv.currentFloor = 0;
-  osMagicElv.nextFloor = 0;
+  osMagicElv.nextFloor = 1;
   osMagicElv.totalPass = 0;
   osMagicElv.totalWeightWhole = 0;
   osMagicElv.totalWeightFrac = 0;
@@ -41,15 +43,14 @@ void elevatorRelease(void) {
   int i = 0;
 
   mutex_lock_interruptible(&floor_mutex);
+  // By changing the state to STOPPED, the threaded elevator movement function
+  // will no longer load new passengers into the elevator.
   osMagicElv.state = STOPPED;
 
-  if(!list_empty(&osMagicElv.elvPassengers)) {
-    list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers) {
-  		passenger = list_entry(ptr, PassengerNode, passengerList);
-  		list_del(ptr);
-  		kfree(passenger);
-  	} // list_for_each
-  } // if
+  // Wait for the elevator to empty all of its passengers. Then clear the floors.
+  while(!list_empty(&osMagicElv.elvPassengers)) {
+    ssleep(1);
+  }
 
   for(i = 0; i < MAX_FLOOR; ++i) {
     if(list_empty(&osMagicFloors[i].floorPassengers))
@@ -122,18 +123,18 @@ int scheduleNextFloor(void) {
 
   if(osMagicElv.direction == UP) {
     if(osMagicElv.currentFloor + 1 < MAX_FLOOR)
-      nextFloor = ++osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor + 1;
     else {
       osMagicElv.direction = DOWN;
-      nextFloor = --osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor - 1;
     }
   }
   else { // Elevator is going down
     if(osMagicElv.currentFloor - 1 >= MIN_FLOOR)
-      nextFloor = --osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor - 1;
     else {
       osMagicElv.direction = UP;
-      nextFloor = ++osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor + 1;
     }
   }
 
@@ -225,13 +226,19 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
 
 // Elevator movement function. Changes elevator's direction upon reaching 1 or 10.
 void moveToFloor(int floorNum) {
-  if (osMagicElv.currentFloor < floorNum) {
-    osMagicElv.state = DOWN;
-  }
-  else {
-    osMagicElv.state = UP;
-  }
+  // Change the elevator's current floor, and find the next floor.
   osMagicElv.currentFloor = floorNum;
+  osMagicElv.nextFloor = scheduleNextFloor();
+
+  // Change direction if needed, when elevator is not STOPPED.
+  if(osMagicElv.state != STOPPED) {
+    if (osMagicElv.nextFloor < floorNum) {
+      osMagicElv.state = DOWN;
+    }
+    else {
+      osMagicElv.state = UP;
+    }
+  }
 }
 
 // Load appropriate passengers from elevator's current floor until capacity
