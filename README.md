@@ -4,7 +4,7 @@
 * Jason Souza
 * Ricardo Castilla
 * Philip Scott
-* Conor Stephen
+* Conor Stephens
 
 ### Purpose ###
 * Learn how to create a kernel module
@@ -12,10 +12,27 @@
 * Version: 1.0
 
 ### Tar file contents ###
-elevator/
+
+-> elevator/
+
     -> README.txt
     -> README.md
     -> report.txt
+
+    -> divers/
+        -> consumer.c
+        -> consumer.x
+        -> elevator_calls.c
+        -> elevator_calls.h
+        -> Makefile
+        -> producer.c
+        -> producer.h
+
+    -> include/
+        -> elevator.h
+        -> elevatorproc.h
+        -> scheduler.h
+        -> syscalls.h
 
     -> src/
         -> elevator.c
@@ -25,12 +42,7 @@ elevator/
         -> sys_issue_request.c
         -> sys_start_elevator.c
         -> sys_stop_elevator.c
-
-    -> include/
-        -> elevator.h
-        -> elevatorproc.h
-        -> scheduler.h
-        -> syscall.h
+        -> syscalls.c
 
     -> part1/
         -> main.c
@@ -67,18 +79,26 @@ $> make testadd
 ```
 $> make testadd10
 ```
-* To automate the start, add, and stop of one request
+* To crate hundreds of requests, it is possible to call the following in a script
+```
+$> make testadd10 &
+```
+* To automate the start, add, and stop of one request (also removes the module)
 ```
 $> make test
 ```
-* To stop the elevator module
+* To stop and remove the elevator module
 ```
 $> make teststop
 ```
+* To start, or stop the elevator without inserting or removing the module, you may use
+```
+$> ./drivers/consumer.x --start
+$> ./drivers/consumer.x --stop
+```
+respectively
 
 ### Known Bugs ###
 
-* Fractoinal numbers are not counted correctly sometimes, which causes
-    the elevator to carry more weight than allowed
-* Module hangs (dealocks?) when the elevator has people inside and is stopped.
-    Fixed by doing sudo rmmod elevator
+- Fraction values do not update correctly, which causes the elevator to accept more weight, and units than allowed (rarely)
+- When elevator is stopped, all passengers are deallocated. This might not be a wanted 'feature'

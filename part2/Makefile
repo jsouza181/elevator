@@ -1,4 +1,4 @@
-ifneq ($(KERNELRELEASE),) 
+ifneq ($(KERNELRELEASE),)
   obj-m := my_xtime.o
 else
   KERNELDIR ?= /lib/modules/`uname -r`/build/
@@ -9,5 +9,4 @@ default:
 endif
 
 clean:
-	 rm -f *.ko *.o Module* *mod*
-
+	 rm -f -r *.ko* .*.cmd *.o* Module* *mod* .tmp_versions
