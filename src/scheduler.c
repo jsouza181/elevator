@@ -11,13 +11,16 @@ int serviceRequests(void *data) {
   ssleep(1);
 
   while(!kthread_should_stop()) {
-    // Determine the next floor to visit
-    osMagicElv.nextFloor = scheduleNextFloor();
-    // Sleep for movement
+    // Elevator Movement
+    osMagicElv.state = osMagicElv.direction;
     ssleep(2);
     moveToFloor(osMagicElv.nextFloor);
 
-    // Sleep for load/unload
+    // Determine the next floor to visit
+    osMagicElv.nextFloor = scheduleNextFloor();
+
+    // Load/unload
+    osMagicElv.state = LOADING;
     ssleep(1);
     unloadPassengers();
     loadPassengers();
