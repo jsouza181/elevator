@@ -8,6 +8,10 @@ extern long (*STUB_start_elevator)(void);
 long start_elevator(void) {
   printk("Starting elevator\n");
 
+  // Do not initialize elevator if it has already been started.
+  if(osMagicElv.state != STOPPED)
+    return 1;
+
   //Initialize elevator and floors
   elevatorStart();
 
