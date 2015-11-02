@@ -5,7 +5,9 @@
 Elevator osMagicElv;
 Floor osMagicFloors[];
 
-// Initialize elevator and floors
+/* Initialization and Deallocation functions */
+
+// Initialize elevator and floors.
 void elevatorInit(void) {
   int i;
 
@@ -13,7 +15,7 @@ void elevatorInit(void) {
   osMagicElv.state = IDLE;
   osMagicElv.direction = UP;
   osMagicElv.currentFloor = 0;
-  osMagicElv.nextFloor = 0;
+  osMagicElv.nextFloor = 1;
   osMagicElv.totalPass = 0;
   osMagicElv.totalWeightWhole = 0;
   osMagicElv.totalWeightFrac = 0;
@@ -219,7 +221,7 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
 
 // Elevator movement function. Changes elevator's direction upon reaching 1 or 10.
 void moveToFloor(int floorNum) {
-  if (osMagicElv.currentFloor < floorNum) {
+  if (osMagicElv.nextFloor < floorNum) {
     osMagicElv.state = DOWN;
   }
   else {
