@@ -33,10 +33,10 @@ void elevatorInit(void) {
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
-  } // for
+  }
   mutex_unlock(&floor_mutex);
 
-} // elevatorInit
+}
 
 // Set the elevator to STOPPED, then free dynamic lists and unload remaining passengers.
 void elevatorRelease(void) {
@@ -53,7 +53,6 @@ void elevatorRelease(void) {
   while(!list_empty(&osMagicElv.elvPassengers)) {
     ssleep(1);
   }
-
   for(i = 0; i < MAX_FLOOR; ++i) {
     if(list_empty(&osMagicFloors[i].floorPassengers))
       continue;
@@ -62,8 +61,8 @@ void elevatorRelease(void) {
   		passenger = list_entry(ptr, PassengerNode, passengerList);
   		list_del(ptr);
   		kfree(passenger);
-  	} // list_for_each
-  } // for
+  	}
+  }
   mutex_unlock(&floor_mutex);
 }
 
@@ -217,10 +216,10 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
       newPassenger.weightFrac = ROOM_SERVICE_WEIGHT_FRAC;
       newPassenger.size = ROOM_SERVICE_SIZE;
       break;
-  } // switch
+  }
 
   return newPassenger;
-} // createPassenger
+}
 
 /*
  * Elevator functions
@@ -239,9 +238,9 @@ void moveToFloor(int floorNum) {
     }
     else {
       osMagicElv.state = UP;
-    } // else
-  } // if
-} //moveToFloor
+    }
+  }
+}
 
 // Load appropriate passengers from elevator's current floor until capacity
 void loadPassengers(void) {
@@ -273,7 +272,7 @@ void loadPassengers(void) {
     newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
         PassengerNode, passengerList);
     mutex_unlock(&floor_mutex);
-  } // while
+    } // while
   // end the mutex here
 }
 
@@ -289,19 +288,19 @@ void unloadPassengers(void) {
   // start a mutex here
   list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers)
   {
-    servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
+     servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
 
-    if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
+     if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
 
-      osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
-      servicedPassenger->passenger.weightFrac);
-      osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
-      osMagicElv.totalPass -= servicedPassenger->passenger.size;
+     osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
+     servicedPassenger->passenger.weightFrac);
+     osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
+     osMagicElv.totalPass -= servicedPassenger->passenger.size;
 
-      list_del(ptr);
-      kfree(servicedPassenger);
-      // end the mutex here
-    }
+     list_del(ptr);
+     kfree(servicedPassenger);
+     // end the mutex here
+     }
   }
 
 }

@@ -11,22 +11,26 @@
 int serviceRequests(void *data) {
   // ssleep(1);
 
+  // Threaded function to handle elevator movement.
   while(!kthread_should_stop()) {
+    //Elevator movement.
+    if(osMagicElv.state != STOPPED)
+      osMagicElv.state = osMagicElv.direction;
 
-    mutex_lock_interruptible(&floor_mutex);
-    // Determine the next floor to visit
-    osMagicElv.nextFloor = scheduleNextFloor();
-    mutex_unlock(&floor_mutex);
-
-    // Sleep for movement
     ssleep(2);
     moveToFloor(osMagicElv.nextFloor);
 
-    // Sleep for load/unload
+    // Load/Unload
+    if(osMagicElv.state != STOPPED)
+      osMagicElv.state = LOADING;
     ssleep(1);
     // no locking needed because each does it on its own
     unloadPassengers();
-    loadPassengers();
+
+    // Do not load passengers if the elevator is STOPPED
+    if(osMagicElv.state != STOPPED)
+      loadPassengers();
+
   } // while
 
   osMagicElv.state = STOPPED;
