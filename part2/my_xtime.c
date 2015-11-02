@@ -11,7 +11,7 @@ MODULE_LICENSE("Dual BSD/GPL");
 MODULE_AUTHOR("NAMES");
 MODULE_DESCRIPTION("Hello World Test Module");
 
-#define ENTRY_NAME "my_xtime"
+#define ENTRY_NAME "timed"
 #define PERMS 0644
 #define PARENT NULL;
 

@@ -44,9 +44,18 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
     return 1;
   }
 
-  // Producer makes requests from 1-9, not 0-10
+  // Producer makes requests from 1-10, not 0-9
   --start_floor;
   --destination_floor;
+
+  if(start_floor < 0 || start_floor >= MAX_FLOOR) {
+    printk("Invalid request.\n");
+    return 1;
+  }
+  if(destination_floor < 0 || destination_floor >= MAX_FLOOR) {
+    printk("Invalid request.\n");
+    return 1;
+  }
 
   printk("New request: %d, %d => %d\n", passenger_type, start_floor, destination_floor);
 
@@ -59,6 +68,9 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
 extern long (*STUB_stop_elevator)(void);
 long stop_elevator(void) {
   int ret;
+
+  if(osMagicElv.state == STOPPED)
+    return 1;
 
   printk("Stopping elevator\n");
   // Unload remaining passengers, then free dynamic data.
