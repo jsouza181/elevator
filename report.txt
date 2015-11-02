@@ -1,48 +1,51 @@
+Elevator Kernel Module report
+============================
 
 Problem statement:
 ============================
-(Either paraphrase the assignment goal or copy/paste the<br>
-assignment problem statement here.)<br>
-Implement a shell program.<br>
+This project introduces you to the nuts and bolts of system calls, kernel programming, concurrency, and
+synchronization in the kernel. It is divided into three parts.
 
 Steps taken to solve problem
 ============================
-1. Experimented with existing shell.<br>
-2. Took notes on how it handled certain commands.<br>
-3. Wrote a few test programs to understand directory searching.<br>
-4. Implemented user-input routine.<br>
-5. Implemented input-parsing routine.<br>
-6. Implemented input redirection.<br>
-7. Implemented background process.<br>
-8. Experimented with our shell to make sure above were correct.<br>
-9. Implemented zombie-termination.<br>
-10. Implemented forking new process.<br>
-11. Completed.<br>
+1. Compiled Linux kernel 4.2.0
+2. Added custom system calls to the kernel.
+3. Created a basic implementation of a Linux kernel module.
+4. Completed Part 1 (see part1 directory) to familiarize with systemcalls.
+5. Completed Part 2 to familiarize with proc file creation, opening, reading and writing.
+6. Using the basic kernel module implementation with our custom systemcalls, we started part3 (elevator module).
+7. Created structure of the elevator, designed scheduler, passengers list, floors, and each floor's list
+8. Implemented mutexes for thread mutual exclusion
+9. Tested the pants off the elevator
+10. Completed.<br>
 
 Assumptions
 ============================
-•	Redirection and piping would not be mixed within a single command
-•	No more than three pipes per command
-•	Limits and etimes will not be called in the background.
+-	Linux kernel module will be ran under version 4.2.0
+- User will have root access in order to compile and install the kernel module
 
 System calls
 ============================
-
--
+- sys_start_elevator() : starts an elevator if none is already running.
+- sys_issue_request(int,int,int) : creates a request with the given arguments. If arguments are invalid, show error and return
+- sys_stop_elevator() : stops the elevator if one is already running. Else, do nothing
 
 Known Bugs
 ============================
-- no known bugs
+- Fraction values do not update correctly, which causes the elevator to accept more weight, and units than allowed (rarely)
+- When elevator is stopped, all passengers are deallocated. This might not be a wanted 'feature'
 
 Division of Labor
 ============================
-Jason Souza
+Disclaimer: Due to the nature of this project, we were forced to do most of the
+development on the same machine. Various pieces of code were peer-programmed and reviewed.
+The below division of work is a rough outline.
 
-Ricardo Castilla
+Jason Souza - initial code structure and basic functionality
 
-Philip Scott
+Ricardo Castilla - code cleanup (jason's object files and such), threading and locking
 
-Conor Stephens
+Philip Scott + Conor Stephens - scheduler design, implementation and testing
 
 Slack Days Used
 ============================
@@ -50,8 +53,40 @@ none
 
 Log
 ============================
-●
+- 11/2 - Project completed
 
-Questions
+- 11/1 - Mutexing implemented. Fixed a problem with the elevator not terminating.
+
+- 10/31 - Group meeting. Evaded the football game. Fine tuned the scheduling routine
+
+- 10/10-10/30 - Implementation, testing, debugging, and head braking stage
+
+- 10/9 - Jason found an example of implementation of the subtraction of two timespec
+structs. He then used this to implement and test the remainder of our part 2 module,
+which can now display both current and elapsed time on /proc reads.
+
+- 10/8 - Fourth group meeting (Jason, Philip, and Ricardo). Finally got our test kernel
+installed and working properly. We ported our module and began modifying it so that it
+would print the time to its /proc entry. We were able to use the current_kernel_time()
+command to display current time, but were unable to implement subtracting two timespec
+structs properly to find elapsed time.
+
+- 10/7 - Third group meeting (Jason & Philip). Ported our hello module to our machine.
+Have yet to try it on our compiled kernel rather than the cop4610 kernel.
+
+- 10/5 - Second group meeting (Jason & Philip). Successfully got our hello module to make
+a /proc entry.
+
+- 10/2 - First group meeting (Jason & Philip). Downloaded and compiled test kernel to our
+assigned machine. While it was compiling, we completed Part 1: System-call Tracing.
+We then started Part 2: Kernel Module by setting up the basic structure of the module.
+Module still needs to create /proc entry.
+
+- 10/2 - Group formed.
+
+- 9/25 - Project assigned.
+
+Features
 ============================
-●
+- Maximum number of floors can be modified by changing the define statement on elevator.c
+- Visual marker of elevators current position (*)
