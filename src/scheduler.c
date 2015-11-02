@@ -26,6 +26,7 @@ int serviceRequests(void *data) {
   osMagicElv.state = STOPPED;
   return 0;
 }
+
     /*
         elevatorStatus == STOPPED
         while(elevator is not empty)
