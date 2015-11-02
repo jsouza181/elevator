@@ -40,16 +40,14 @@ void elevatorRelease(void) {
   PassengerNode *passenger;
   int i = 0;
 
+  // By changing the state to STOPPED, the threaded elevator movement function
+  // will no longer load new passengers into the elevator.
   osMagicElv.state = STOPPED;
 
-  if(!list_empty(&osMagicElv.elvPassengers)) {
-    list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers) {
-  		passenger = list_entry(ptr, PassengerNode, passengerList);
-  		list_del(ptr);
-  		kfree(passenger);
-  	}
+  // Wait for the elevator to empty all of its passengers. Then clear the floors.
+  while(!list_empty(&osMagicElv.elvPassengers)) {
+    ssleep(1);
   }
-
   for(i = 0; i < MAX_FLOOR; ++i) {
     if(list_empty(&osMagicFloors[i].floorPassengers))
       continue;
@@ -225,12 +223,14 @@ void moveToFloor(int floorNum) {
   osMagicElv.currentFloor = floorNum;
   osMagicElv.nextFloor = scheduleNextFloor();
 
-  // Change direction if needed.
-  if (osMagicElv.nextFloor < floorNum) {
-    osMagicElv.state = DOWN;
-  }
-  else {
-    osMagicElv.state = UP;
+  // Change direction if needed, when elevator is not STOPPED.
+  if(osMagicElv.state != STOPPED) {
+    if (osMagicElv.nextFloor < floorNum) {
+      osMagicElv.state = DOWN;
+    }
+    else {
+      osMagicElv.state = UP;
+    }
   }
 }
 

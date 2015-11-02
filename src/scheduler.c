@@ -10,28 +10,26 @@
 int serviceRequests(void *data) {
   ssleep(1);
 
+  // Do not change any states if elevator is STOPPED.
   while(!kthread_should_stop()) {
-    // Elevator Movement
-    osMagicElv.state = osMagicElv.direction;
+    // Elevator movement.
+    if(osMagicElv.state != STOPPED)
+      osMagicElv.state = osMagicElv.direction;
+
     ssleep(2);
     moveToFloor(osMagicElv.nextFloor);
 
     // Load/unload
-    osMagicElv.state = LOADING;
+    if(osMagicElv.state != STOPPED)
+      osMagicElv.state = LOADING;
+
     ssleep(1);
     unloadPassengers();
-    loadPassengers();
-  }
 
-  osMagicElv.state = STOPPED;
+    // Do not load passengers if the elevator is STOPPED
+    if(osMagicElv.state != STOPPED) {
+      loadPassengers();
+    }
+  }
   return 0;
 }
-
-    /*
-        elevatorStatus == STOPPED
-        while(elevator is not empty)
-          moveToFloor(next floor)
-          unloadPassengers()
-
-          lastly, elevatorState == STOPPED
-    */
