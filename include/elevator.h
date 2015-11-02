@@ -81,8 +81,8 @@ void addToFloor(int floorNum, Passenger pgr);
 Passenger createPassenger(int passengerType, int currentFloor, int nextFloor);
 
 // Elevator functions
-void elevatorStart(void);
-void elevatorStop(void);
+void elevatorInit(void);
+void elevatorRelease(void);
 void moveToFloor(int floorNum);
 void loadPassengers(void);
 void unloadPassengers(void);

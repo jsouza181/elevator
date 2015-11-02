@@ -17,27 +17,23 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0x6d289d41, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x8f269d2d, __VMLINUX_SYMBOL_STR(module_layout) },
 	{ 0x9ecdae3, __VMLINUX_SYMBOL_STR(STUB_start_elevator) },
-	{ 0xe8543091, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
-	{ 0x65e75cb6, __VMLINUX_SYMBOL_STR(__list_del_entry) },
+	{ 0xaf53d93f, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
 	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
-	{ 0x1f3447a5, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
+	{ 0x4a39c364, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
 	{ 0x91715312, __VMLINUX_SYMBOL_STR(sprintf) },
-	{ 0xbb04eae1, __VMLINUX_SYMBOL_STR(kthread_create_on_node) },
-	{ 0x343a1a8, __VMLINUX_SYMBOL_STR(__list_add) },
+	{ 0xc39c4bb, __VMLINUX_SYMBOL_STR(kthread_create_on_node) },
 	{ 0x811606d6, __VMLINUX_SYMBOL_STR(STUB_issue_request) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
-	{ 0x507e09c4, __VMLINUX_SYMBOL_STR(kthread_stop) },
-	{ 0x521445b, __VMLINUX_SYMBOL_STR(list_del) },
+	{ 0xbb85136, __VMLINUX_SYMBOL_STR(kthread_stop) },
 	{ 0x61651be, __VMLINUX_SYMBOL_STR(strcat) },
 	{ 0xdf9b386b, __VMLINUX_SYMBOL_STR(STUB_stop_elevator) },
-	{ 0xdb7305a1, __VMLINUX_SYMBOL_STR(__stack_chk_fail) },
-	{ 0xdbe7d4fd, __VMLINUX_SYMBOL_STR(wake_up_process) },
+	{ 0x3212dedd, __VMLINUX_SYMBOL_STR(wake_up_process) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
-	{ 0x280f1eb0, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
+	{ 0xc24babab, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
 	{ 0xb3f7646e, __VMLINUX_SYMBOL_STR(kthread_should_stop) },
-	{ 0xbc8af77f, __VMLINUX_SYMBOL_STR(proc_create_data) },
+	{ 0xfb2ba341, __VMLINUX_SYMBOL_STR(proc_create_data) },
 	{ 0x37a0cba, __VMLINUX_SYMBOL_STR(kfree) },
 	{ 0x69acdf38, __VMLINUX_SYMBOL_STR(memcpy) },
 };
@@ -48,4 +44,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "A8283167425E0332277D1F3");
+MODULE_INFO(srcversion, "F8AFE124BB5872938BAA0BF");

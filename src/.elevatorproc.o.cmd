@@ -1,4 +1,4 @@
-cmd_/usr/src/test_kernel/elevator/src/elevatorproc.o := gcc -Wp,-MD,/usr/src/test_kernel/elevator/src/.elevatorproc.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.8/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_X86_X32_ABI -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -g -pg -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -DCC_HAVE_ASM_GOTO -I/usr/src/test_kernel/elevator/include  -DMODULE  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(elevatorproc)"  -D"KBUILD_MODNAME=KBUILD_STR(elevator)" -c -o /usr/src/test_kernel/elevator/src/.tmp_elevatorproc.o /usr/src/test_kernel/elevator/src/elevatorproc.c
+cmd_/usr/src/test_kernel/elevator/src/elevatorproc.o := gcc -Wp,-MD,/usr/src/test_kernel/elevator/src/.elevatorproc.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.6/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -O2 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -g -pg -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -DCC_HAVE_ASM_GOTO -I/usr/src/test_kernel/elevator/include  -DMODULE  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(elevatorproc)"  -D"KBUILD_MODNAME=KBUILD_STR(elevator)" -c -o /usr/src/test_kernel/elevator/src/.tmp_elevatorproc.o /usr/src/test_kernel/elevator/src/elevatorproc.c
 
 source_/usr/src/test_kernel/elevator/src/elevatorproc.o := /usr/src/test_kernel/elevator/src/elevatorproc.c
 
@@ -79,7 +79,7 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
     $(wildcard include/config/panic/timeout.h) \
     $(wildcard include/config/tracing.h) \
     $(wildcard include/config/ftrace/mcount/record.h) \
-  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/4.6/include/stdarg.h \
   include/linux/bitops.h \
   arch/x86/include/asm/bitops.h \
     $(wildcard include/config/x86/cmov.h) \
@@ -107,27 +107,6 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   arch/x86/include/asm/processor-flags.h \
     $(wildcard include/config/vm86.h) \
   arch/x86/include/uapi/asm/processor-flags.h \
-  arch/x86/include/asm/paravirt_types.h \
-    $(wildcard include/config/x86/local/apic.h) \
-    $(wildcard include/config/pgtable/levels.h) \
-    $(wildcard include/config/x86/pae.h) \
-    $(wildcard include/config/queued/spinlocks.h) \
-    $(wildcard include/config/paravirt/debug.h) \
-  arch/x86/include/asm/desc_defs.h \
-  arch/x86/include/asm/kmap_types.h \
-    $(wildcard include/config/debug/highmem.h) \
-  include/asm-generic/kmap_types.h \
-  arch/x86/include/asm/pgtable_types.h \
-    $(wildcard include/config/kmemcheck.h) \
-    $(wildcard include/config/mem/soft/dirty.h) \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
-    $(wildcard include/config/sparsemem.h) \
-  arch/x86/include/asm/spinlock_types.h \
-    $(wildcard include/config/paravirt/spinlocks.h) \
-    $(wildcard include/config/nr/cpus.h) \
-  include/asm-generic/qspinlock_types.h \
-  include/asm-generic/qrwlock_types.h \
   include/asm-generic/ptrace.h \
   arch/x86/include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
@@ -135,6 +114,7 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/x86/minimum/cpu/family.h) \
     $(wildcard include/config/math/emulation.h) \
+    $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/x86/cmpxchg64.h) \
     $(wildcard include/config/x86/use/3dnow.h) \
     $(wildcard include/config/x86/p6/nop.h) \
@@ -178,6 +158,17 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/uapi/linux/kernel.h \
   include/uapi/linux/sysinfo.h \
   include/linux/dynamic_debug.h \
+  include/linux/string.h \
+    $(wildcard include/config/binary/printf.h) \
+  include/uapi/linux/string.h \
+  arch/x86/include/asm/string.h \
+  arch/x86/include/asm/string_64.h \
+    $(wildcard include/config/kmemcheck.h) \
+  include/linux/errno.h \
+  include/uapi/linux/errno.h \
+  arch/x86/include/uapi/asm/errno.h \
+  include/uapi/asm-generic/errno.h \
+  include/uapi/asm-generic/errno-base.h \
   include/linux/spinlock.h \
     $(wildcard include/config/debug/spinlock.h) \
     $(wildcard include/config/generic/lockbreak.h) \
@@ -192,6 +183,7 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/asm-generic/percpu.h \
     $(wildcard include/config/have/setup/per/cpu/area.h) \
   include/linux/threads.h \
+    $(wildcard include/config/nr/cpus.h) \
     $(wildcard include/config/base/small.h) \
   include/linux/percpu-defs.h \
     $(wildcard include/config/debug/force/weak/per/cpu.h) \
@@ -216,6 +208,7 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/sparsemem/vmemmap.h) \
+    $(wildcard include/config/sparsemem.h) \
   include/asm-generic/getorder.h \
   arch/x86/include/asm/processor.h \
     $(wildcard include/config/m486.h) \
@@ -226,28 +219,25 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   arch/x86/include/asm/sigcontext.h \
   arch/x86/include/uapi/asm/sigcontext.h \
   arch/x86/include/asm/current.h \
+  arch/x86/include/asm/pgtable_types.h \
+    $(wildcard include/config/mem/soft/dirty.h) \
+    $(wildcard include/config/pgtable/levels.h) \
+  arch/x86/include/asm/pgtable_64_types.h \
+  arch/x86/include/asm/sparsemem.h \
   arch/x86/include/asm/msr.h \
   arch/x86/include/asm/msr-index.h \
-  arch/x86/include/uapi/asm/errno.h \
-  include/uapi/asm-generic/errno.h \
-  include/uapi/asm-generic/errno-base.h \
   arch/x86/include/asm/cpumask.h \
   include/linux/cpumask.h \
     $(wildcard include/config/cpumask/offstack.h) \
     $(wildcard include/config/hotplug/cpu.h) \
     $(wildcard include/config/debug/per/cpu/maps.h) \
   include/linux/bitmap.h \
-  include/linux/string.h \
-    $(wildcard include/config/binary/printf.h) \
-  include/uapi/linux/string.h \
-  arch/x86/include/asm/string.h \
-  arch/x86/include/asm/string_64.h \
   arch/x86/include/uapi/asm/msr.h \
   include/uapi/linux/ioctl.h \
   arch/x86/include/uapi/asm/ioctl.h \
   include/asm-generic/ioctl.h \
   include/uapi/asm-generic/ioctl.h \
-  arch/x86/include/asm/paravirt.h \
+  arch/x86/include/asm/desc_defs.h \
   arch/x86/include/asm/special_insns.h \
   arch/x86/include/asm/fpu/types.h \
   include/linux/personality.h \
@@ -272,6 +262,11 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/asm-generic/atomic-long.h \
   include/linux/bottom_half.h \
   include/linux/spinlock_types.h \
+  arch/x86/include/asm/spinlock_types.h \
+    $(wildcard include/config/paravirt/spinlocks.h) \
+    $(wildcard include/config/queued/spinlocks.h) \
+  include/asm-generic/qspinlock_types.h \
+  include/asm-generic/qrwlock_types.h \
   include/linux/lockdep.h \
     $(wildcard include/config/lock/stat.h) \
   include/linux/rwlock_types.h \
@@ -279,6 +274,7 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/linux/jump_label.h \
     $(wildcard include/config/jump/label.h) \
   arch/x86/include/asm/jump_label.h \
+  arch/x86/include/asm/paravirt.h \
   arch/x86/include/asm/qspinlock.h \
   include/asm-generic/qspinlock.h \
   arch/x86/include/asm/qrwlock.h \
@@ -406,9 +402,8 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
     $(wildcard include/config/debug/vm.h) \
   include/linux/smp.h \
     $(wildcard include/config/up/late/init.h) \
-  include/linux/errno.h \
-  include/uapi/linux/errno.h \
   arch/x86/include/asm/smp.h \
+    $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/x86/io/apic.h) \
     $(wildcard include/config/x86/32/smp.h) \
     $(wildcard include/config/debug/nmi/selftest.h) \
@@ -485,22 +480,13 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/asm-generic/pci_iomap.h \
     $(wildcard include/config/no/generic/pci/ioport/map.h) \
     $(wildcard include/config/generic/pci/iomap.h) \
-  include/xen/xen.h \
-    $(wildcard include/config/xen/dom0.h) \
-    $(wildcard include/config/xen/pvh.h) \
-  include/xen/interface/xen.h \
-  arch/x86/include/asm/xen/interface.h \
-  arch/x86/include/asm/xen/interface_64.h \
-  arch/x86/include/asm/pvclock-abi.h \
-  arch/x86/include/asm/xen/hypervisor.h \
-  include/xen/features.h \
-  include/xen/interface/features.h \
   arch/x86/include/asm/pvclock.h \
   include/linux/clocksource.h \
     $(wildcard include/config/arch/clocksource/data.h) \
     $(wildcard include/config/clocksource/watchdog.h) \
     $(wildcard include/config/clksrc/of.h) \
   arch/x86/include/asm/clocksource.h \
+  arch/x86/include/asm/pvclock-abi.h \
   arch/x86/include/uapi/asm/vsyscall.h \
   include/asm-generic/fixmap.h \
   arch/x86/include/asm/idle.h \
@@ -636,12 +622,11 @@ deps_/usr/src/test_kernel/elevator/src/elevatorproc.o := \
   include/uapi/linux/auxvec.h \
   arch/x86/include/uapi/asm/auxvec.h \
   include/linux/uprobes.h \
-  arch/x86/include/asm/uprobes.h \
   include/linux/cputime.h \
   arch/x86/include/generated/asm/cputime.h \
   include/asm-generic/cputime.h \
     $(wildcard include/config/virt/cpu/accounting.h) \
-  include/asm-generic/cputime_nsecs.h \
+  include/asm-generic/cputime_jiffies.h \
   include/linux/sem.h \
   include/uapi/linux/sem.h \
   include/linux/ipc.h \

@@ -11,24 +11,26 @@ int serviceRequests(void *data) {
   ssleep(1);
 
   while(!kthread_should_stop()) {
-      // Determine the next floor to visit
-      osMagicElv.nextFloor = scheduleNextFloor();
-      // Sleep for movement
-      ssleep(2);
-      moveToFloor(osMagicElv.nextFloor);
+    // Determine the next floor to visit
+    osMagicElv.nextFloor = scheduleNextFloor();
+    // Sleep for movement
+    ssleep(2);
+    moveToFloor(osMagicElv.nextFloor);
 
-      // Sleep for load/unload
-      ssleep(1);
-      unloadPassengers();
-      loadPassengers();
+    // Sleep for load/unload
+    ssleep(1);
+    unloadPassengers();
+    loadPassengers();
+  }
 
+  osMagicElv.state = STOPPED;
+  return 0;
+}
     /*
         elevatorStatus == STOPPED
         while(elevator is not empty)
           moveToFloor(next floor)
           unloadPassengers()
-    */
-  }
-  return 0;
 
-}
+          lastly, elevatorState == STOPPED
+    */

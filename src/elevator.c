@@ -6,7 +6,7 @@ Elevator osMagicElv;
 Floor osMagicFloors[];
 
 // Initialize elevator and floors
-void elevatorStart(void) {
+void elevatorInit(void) {
   int i;
 
   // Initialize elevator
@@ -32,8 +32,32 @@ void elevatorStart(void) {
 
 }
 
-void elevatorStop(void) {
+// Set the elevator to STOPPED, then free dynamic lists and unload remaining passengers.
+void elevatorRelease(void) {
+  struct list_head *temp, *ptr;
+  PassengerNode *passenger;
+  int i = 0;
+
   osMagicElv.state = STOPPED;
+
+  if(!list_empty(&osMagicElv.elvPassengers)) {
+    list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers) {
+  		passenger = list_entry(ptr, PassengerNode, passengerList);
+  		list_del(ptr);
+  		kfree(passenger);
+  	}
+  }
+
+  for(i = 0; i < MAX_FLOOR; ++i) {
+    if(list_empty(&osMagicFloors[i].floorPassengers))
+      continue;
+
+    list_for_each_safe(ptr, temp, &osMagicFloors[i].floorPassengers) {
+  		passenger = list_entry(ptr, PassengerNode, passengerList);
+  		list_del(ptr);
+  		kfree(passenger);
+  	}
+  }
 }
 
 /*
@@ -131,7 +155,6 @@ int passengerDirection(int currentFloor, int nextFloor) {
 void addToFloor(int floorNum, Passenger pgr) {
   PassengerNode *newPassengerNode;
 
-  printk("TEST before allocating mem for node\n");
   // Add the passenger to the floor's list of waiting passengers
   newPassengerNode = kmalloc(sizeof(PassengerNode), __GFP_WAIT | __GFP_IO | __GFP_FS);
 
@@ -147,19 +170,13 @@ void addToFloor(int floorNum, Passenger pgr) {
   newPassengerNode->passenger.weightFrac = pgr.weightFrac;
   newPassengerNode->passenger.size = pgr.size;
 
-  printk("TEST before adding to floor's passengers");
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
-  printk("TEST after adding to floor's passengers");
 
   osMagicFloors[floorNum].totalWeightWhole += newPassengerNode->passenger.weightWhole;
   osMagicFloors[floorNum].totalWeightFrac += newPassengerNode->passenger.weightFrac;
   osMagicFloors[floorNum].totalPass += newPassengerNode->passenger.size;
 }
 
-/*
-      ADD 3RD ARGUMENT: CURRENT floor
-      USE TO INITIALIZE PASSENGER'S DIRECTION VARIABLE
-*/
 Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
   Passenger newPassenger;
 
@@ -200,10 +217,7 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
  * Elevator functions
  */
 
-// Need a threaded function to continually check for when floors become populated
-// Only runs when elevator is in IDLE state
-
-// Threaded movement function. Ordered to stop when elevator is idle.
+// Elevator movement function. Changes elevator's direction upon reaching 1 or 10.
 void moveToFloor(int floorNum) {
   if (osMagicElv.currentFloor < floorNum) {
     osMagicElv.state = DOWN;
