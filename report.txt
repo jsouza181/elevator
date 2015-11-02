@@ -33,7 +33,7 @@ System calls
 Known Bugs
 ============================
 - Fraction values do not update correctly, which causes the elevator to accept more weight, and units than allowed (rarely)
-- When elevator is stopped, all passengers are deallocated. This might not be a wanted 'feature'
+- When elevator is stopped, all passengers waiting on a floor are deallocated. This might not be a wanted 'feature'
 
 Division of Labor
 ============================
@@ -59,7 +59,7 @@ Log
 
 - 10/31 - Group meeting. Evaded the football game. Fine tuned the scheduling routine
 
-- 10/10-10/30 - Implementation, testing, debugging, and head braking stage
+- 10/10-10/30 - Implementation, testing, debugging, and head braking stage for elevator module
 
 - 10/9 - Jason found an example of implementation of the subtraction of two timespec
 structs. He then used this to implement and test the remainder of our part 2 module,

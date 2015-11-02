@@ -101,4 +101,4 @@ respectively
 ### Known Bugs ###
 
 - Fraction values do not update correctly, which causes the elevator to accept more weight, and units than allowed (rarely)
-- When elevator is stopped, all passengers are deallocated. This might not be a wanted 'feature'
+- When elevator is stopped, all passengers waiting on a floor are deallocated. This might not be a wanted 'feature'
