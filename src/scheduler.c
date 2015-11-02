@@ -4,35 +4,31 @@
 #include <linux/module.h>
 #include <linux/list.h>
 #include <linux/slab.h>
+#include <linux/mutex.h>
 #include "elevator.h"
 
-
-// Add passenger's desired floor to the list of scheduled floors
-void scheduleRequest(int requestFloor) {
-  RequestNode *newRequest;
-
-  // Add the new request floor to the queue of floors to visit.
-  newRequest = kmalloc(sizeof(RequestNode), __GFP_WAIT | __GFP_IO | __GFP_FS);
-  newRequest->floorNum = requestFloor;
-  printk("Memory for newRequest successfully allocated\n");
-  list_add_tail(&newRequest->requestList, &requestQueue);
-  printk("newRequest added to request queue\n");
-}
-
+// Threaded function to handle elevator movement.
 int serviceRequests(void *data) {
-  RequestNode *nextFloorToVisit;
-  ssleep(1);
+  // ssleep(1);
 
   while(!kthread_should_stop()) {
-    if(!list_empty(&requestQueue)) { // If there is a request to service
-      nextFloorToVisit = list_first_entry(&requestQueue, RequestNode, requestList);
 
-      // Delete the request
-      list_del_init(&nextFloorToVisit->requestList);
-      kfree(nextFloorToVisit);
-    }
-    printk("IM STILL ALIVE!!!\n");
+    mutex_lock_interruptible(&floor_mutex);
+    // Determine the next floor to visit
+    osMagicElv.nextFloor = scheduleNextFloor();
+    mutex_unlock(&floor_mutex);
+
+    // Sleep for movement
     ssleep(2);
-  }
+    moveToFloor(osMagicElv.nextFloor);
+
+    // Sleep for load/unload
+    ssleep(1);
+    // no locking needed because each does it on its own
+    unloadPassengers();
+    loadPassengers();
+  } // while
+
+  osMagicElv.state = STOPPED;
   return 0;
 }

@@ -69,7 +69,6 @@ typedef struct elevator {
 
 extern Elevator osMagicElv;
 extern Floor osMagicFloors[MAX_FLOOR];
-extern struct mutex floor_mutex;
 
 // Utility functions
 int findWeightWhole(int whole, int frac);
@@ -82,8 +81,8 @@ void addToFloor(int floorNum, Passenger pgr);
 Passenger createPassenger(int passengerType, int currentFloor, int nextFloor);
 
 // Elevator functions
-void elevatorInit(void);
-void elevatorRelease(void);
+void elevatorStart(void);
+void elevatorStop(void);
 void moveToFloor(int floorNum);
 void loadPassengers(void);
 void unloadPassengers(void);

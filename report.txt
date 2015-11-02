@@ -28,18 +28,7 @@ Assumptions
 System calls
 ============================
 
-unistd.h - fork(), execv(), access(), pipe(), dup2(), gethostname(), getcwd(), getenv(), setenv()
-wait.h - waitpid()
-
-Problems
-============================
-- cd not in a fork (We don't think it needs to be, since PWD is process-specific)
-- getting the limits file after the child was executed
-- fixed by creating a temporary file
-- considered putting parent to sleep to force a context switch, but that seemed unreliable
-- input redirection through us for a loop, because echo does not accept it
-- precious time was lost in this
-- Linprog keeps getting overwhelmed and running extremely slowly. Sometimes confusing us as to whether our program broke or Linprog.
+-
 
 Known Bugs
 ============================

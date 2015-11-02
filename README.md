@@ -48,6 +48,17 @@ elevator/
 
     -> Makefile
 
+    -> proc_view.sh
+
+    -> part1/
+        -> Makefile
+
+    -> part2/
+
+        -> Makefile
+
+        -> my_xtime.c
+
 ### Compiling ###
 * Use provided makefile to compile the source code
 ```
@@ -81,28 +92,9 @@ $> make test
 $> make teststop
 ```
 
-## Directory Structure ##
-Because git does not commit empty directories, it might be necessary to manually create the necessary directories.
-
-Directory structure should be:
-
-shell/
-    -> src/ : source code
-    -> lib/ : header files
-    -> output/ : generated output (testing output, executables, etc.)
-    -> obj/ : generated object files (\*.o)
-
-### Features ###
-
-* Unlimited amount of pipes (unless one of the below buggy commands is used)
-* Multiple redirection within one command
-* Use any environment variable, it is supported
-
 ### Known Bugs ###
 
-* Piping creates zombies processes. These are dealt with on the next command, or at exit
-    Formatting is also a little off sometimes
-* There is a great amount of memory leaks caused by getArg()
-    I have no idea how to fix them besides redesigning the function. 80% of memory leaks are caused by this function
-    This is not a bug. It is a feature
-*  Can handle extra spaces, but won't parse apart unspaced commands
+* Fractoinal numbers are not counted correctly sometimes, which causes
+    the elevator to carry more weight than allowed
+* Module hangs (dealocks?) when the elevator has people inside and is stopped.
+    Fixed by doing sudo rmmod elevator
