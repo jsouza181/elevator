@@ -1,10 +1,10 @@
 # SHELL #
 
 ### Members ###
-Jason Souza<br>
-Ricardo Castilla<br>
-Philip Scott<br>
-Conor Stephen<br>
+* Jason Souza
+* Ricardo Castilla
+* Philip Scott
+* Conor Stephen
 
 ### Purpose ###
 * Learn how to create a kernel module
@@ -13,51 +13,35 @@ Conor Stephen<br>
 
 ### Tar file contents ###
 elevator/
-
     -> README.txt
-
     -> README.md
-
     -> report.txt
 
     -> src/
-
         -> elevator.c
-
         -> elevatorproc.c
-
         -> module.c
-
         -> scheduler.c
-
         -> sys_issue_request.c
-
         -> sys_start_elevator.c
-
         -> sys_stop_elevator.c
 
     -> include/
-
         -> elevator.h
-
         -> elevatorproc.h
-
         -> scheduler.h
-
         -> syscall.h
 
-    -> Makefile
-
-    -> proc_view.sh
-
     -> part1/
+        -> main.c
         -> Makefile
 
     -> part2/
-
         -> Makefile
-
         -> my_xtime.c
+
+    -> Makefile
+    -> proc_view.sh
 
 ### Compiling ###
 * Use provided makefile to compile the source code

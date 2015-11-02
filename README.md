@@ -1,13 +1,10 @@
 # SHELL #
 
 ### Members ###
-Jason Souza
-
-Ricardo Castilla
-
-Philip Scott
-
-Conor Stephen
+* Jason Souza
+* Ricardo Castilla
+* Philip Scott
+* Conor Stephen
 
 ### Purpose ###
 * Learn how to create a kernel module
@@ -35,8 +32,6 @@ elevator/
         -> scheduler.h
         -> syscall.h
 
-    -> Makefile
-    -> proc_view.sh
     -> part1/
         -> main.c
         -> Makefile
@@ -44,6 +39,9 @@ elevator/
     -> part2/
         -> Makefile
         -> my_xtime.c
+
+    -> Makefile
+    -> proc_view.sh
 
 ### Compiling ###
 * Use provided makefile to compile the source code
