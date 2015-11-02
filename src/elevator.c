@@ -26,15 +26,17 @@ void elevatorInit(void) {
   INIT_LIST_HEAD(&osMagicElv.elvPassengers);
 
   // Initialize floors
+  mutex_lock_interruptible(&floor_mutex);
   for(i = 0; i < MAX_FLOOR; i++) {
     osMagicFloors[i].totalWeightWhole = 0;
     osMagicFloors[i].totalWeightFrac = 0;
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
-  }
+  } // for
+  mutex_unlock(&floor_mutex);
 
-}
+} // elevatorInit
 
 // Set the elevator to STOPPED, then free dynamic lists and unload remaining passengers.
 void elevatorRelease(void) {
@@ -215,10 +217,10 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
       newPassenger.weightFrac = ROOM_SERVICE_WEIGHT_FRAC;
       newPassenger.size = ROOM_SERVICE_SIZE;
       break;
-  }
+  } // switch
 
   return newPassenger;
-}
+} // createPassenger
 
 /*
  * Elevator functions
@@ -237,9 +239,9 @@ void moveToFloor(int floorNum) {
     }
     else {
       osMagicElv.state = UP;
-    }
-  }
-}
+    } // else
+  } // if
+} //moveToFloor
 
 // Load appropriate passengers from elevator's current floor until capacity
 void loadPassengers(void) {
