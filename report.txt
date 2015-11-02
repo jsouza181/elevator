@@ -1,0 +1,61 @@
+
+Problem statement:
+============================
+(Either paraphrase the assignment goal or copy/paste the<br>
+assignment problem statement here.)<br>
+Implement a shell program.<br>
+
+Steps taken to solve problem
+============================
+1. Experimented with existing shell.<br>
+2. Took notes on how it handled certain commands.<br>
+3. Wrote a few test programs to understand directory searching.<br>
+4. Implemented user-input routine.<br>
+5. Implemented input-parsing routine.<br>
+6. Implemented input redirection.<br>
+7. Implemented background process.<br>
+8. Experimented with our shell to make sure above were correct.<br>
+9. Implemented zombie-termination.<br>
+10. Implemented forking new process.<br>
+11. Completed.<br>
+
+Assumptions
+============================
+•	Redirection and piping would not be mixed within a single command
+•	No more than three pipes per command
+•	Limits and etimes will not be called in the background.
+
+System calls
+============================
+
+
+
+Problems
+============================
+-
+
+Known Bugs
+============================
+- no known bugs
+
+Division of Labor
+============================
+Jason Souza
+
+Ricardo Castilla
+
+Philip Scott
+
+Conor Stephens
+
+Slack Days Used
+============================
+none
+
+Log
+============================
+●
+
+Questions
+============================
+●
