@@ -3,14 +3,12 @@
 
 int main()
 {
-  FILE *fp = fopen("test.txt", "w+");
-
-  fprintf(fp, "Testing file output.\n");
-
+  FILE *fp = fopen("out.txt", "w+");
+  if (fp != NULL) {
+    fprintf(fp, "Testing file output.\n");
+    fclose(fp);
+  }
   wait(1);
   wait(1);
-
-  fclose(fp);
-
   return 0;
 }
