@@ -1,19 +1,23 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
+#include <linux/mutex.h>
 #include "elevator.h"
 
 Elevator osMagicElv;
 Floor osMagicFloors[];
+struct mutex floor_mutex;
 
-// Initialize elevator and floors
-void elevatorStart(void) {
+/* Initialization and Deallocation functions */
+
+// Initialize elevator and floors.
+void elevatorInit(void) {
   int i;
 
   // Initialize elevator
   osMagicElv.state = IDLE;
   osMagicElv.direction = UP;
   osMagicElv.currentFloor = 0;
-  osMagicElv.nextFloor = 0;
+  osMagicElv.nextFloor = 1;
   osMagicElv.totalPass = 0;
   osMagicElv.totalWeightWhole = 0;
   osMagicElv.totalWeightFrac = 0;
@@ -22,18 +26,45 @@ void elevatorStart(void) {
   INIT_LIST_HEAD(&osMagicElv.elvPassengers);
 
   // Initialize floors
+  mutex_lock_interruptible(&floor_mutex);
   for(i = 0; i < MAX_FLOOR; i++) {
     osMagicFloors[i].totalWeightWhole = 0;
     osMagicFloors[i].totalWeightFrac = 0;
     osMagicFloors[i].totalPass = 0;
     osMagicFloors[i].totalServed = 0;
     INIT_LIST_HEAD(&osMagicFloors[i].floorPassengers);
+  } // for
+  mutex_unlock(&floor_mutex);
+
+} // elevatorInit
+
+// Set the elevator to STOPPED, then free dynamic lists and unload remaining passengers.
+void elevatorRelease(void) {
+  struct list_head *temp, *ptr;
+  PassengerNode *passenger;
+  int i = 0;
+
+  mutex_lock_interruptible(&floor_mutex);
+  // By changing the state to STOPPED, the threaded elevator movement function
+  // will no longer load new passengers into the elevator.
+  osMagicElv.state = STOPPED;
+
+  // Wait for the elevator to empty all of its passengers. Then clear the floors.
+  while(!list_empty(&osMagicElv.elvPassengers)) {
+    ssleep(1);
   }
 
-}
+  for(i = 0; i < MAX_FLOOR; ++i) {
+    if(list_empty(&osMagicFloors[i].floorPassengers))
+      continue;
 
-void elevatorStop(void) {
-  osMagicElv.state = STOPPED;
+    list_for_each_safe(ptr, temp, &osMagicFloors[i].floorPassengers) {
+  		passenger = list_entry(ptr, PassengerNode, passengerList);
+  		list_del(ptr);
+  		kfree(passenger);
+  	} // list_for_each
+  } // for
+  mutex_unlock(&floor_mutex);
 }
 
 /*
@@ -94,18 +125,18 @@ int scheduleNextFloor(void) {
 
   if(osMagicElv.direction == UP) {
     if(osMagicElv.currentFloor + 1 < MAX_FLOOR)
-      nextFloor = ++osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor + 1;
     else {
       osMagicElv.direction = DOWN;
-      nextFloor = --osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor - 1;
     }
   }
   else { // Elevator is going down
     if(osMagicElv.currentFloor - 1 >= MIN_FLOOR)
-      nextFloor = --osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor - 1;
     else {
       osMagicElv.direction = UP;
-      nextFloor = ++osMagicElv.currentFloor;
+      nextFloor = osMagicElv.currentFloor + 1;
     }
   }
 
@@ -131,7 +162,6 @@ int passengerDirection(int currentFloor, int nextFloor) {
 void addToFloor(int floorNum, Passenger pgr) {
   PassengerNode *newPassengerNode;
 
-  printk("TEST before allocating mem for node\n");
   // Add the passenger to the floor's list of waiting passengers
   newPassengerNode = kmalloc(sizeof(PassengerNode), __GFP_WAIT | __GFP_IO | __GFP_FS);
 
@@ -147,19 +177,15 @@ void addToFloor(int floorNum, Passenger pgr) {
   newPassengerNode->passenger.weightFrac = pgr.weightFrac;
   newPassengerNode->passenger.size = pgr.size;
 
-  printk("TEST before adding to floor's passengers");
+  mutex_lock_interruptible(&floor_mutex);
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
-  printk("TEST after adding to floor's passengers");
 
   osMagicFloors[floorNum].totalWeightWhole += newPassengerNode->passenger.weightWhole;
   osMagicFloors[floorNum].totalWeightFrac += newPassengerNode->passenger.weightFrac;
   osMagicFloors[floorNum].totalPass += newPassengerNode->passenger.size;
+  mutex_unlock(&floor_mutex);
 }
 
-/*
-      ADD 3RD ARGUMENT: CURRENT floor
-      USE TO INITIALIZE PASSENGER'S DIRECTION VARIABLE
-*/
 Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
   Passenger newPassenger;
 
@@ -191,28 +217,31 @@ Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
       newPassenger.weightFrac = ROOM_SERVICE_WEIGHT_FRAC;
       newPassenger.size = ROOM_SERVICE_SIZE;
       break;
-  }
+  } // switch
 
   return newPassenger;
-}
+} // createPassenger
 
 /*
  * Elevator functions
  */
 
-// Need a threaded function to continually check for when floors become populated
-// Only runs when elevator is in IDLE state
-
-// Threaded movement function. Ordered to stop when elevator is idle.
+// Elevator movement function. Changes elevator's direction upon reaching 1 or 10.
 void moveToFloor(int floorNum) {
-  if (osMagicElv.currentFloor < floorNum) {
-    osMagicElv.state = DOWN;
-  }
-  else {
-    osMagicElv.state = UP;
-  }
+  // Change the elevator's current floor, and find the next floor.
   osMagicElv.currentFloor = floorNum;
-}
+  osMagicElv.nextFloor = scheduleNextFloor();
+
+  // Change direction if needed, when elevator is not STOPPED.
+  if(osMagicElv.state != STOPPED) {
+    if (osMagicElv.nextFloor < floorNum) {
+      osMagicElv.state = DOWN;
+    }
+    else {
+      osMagicElv.state = UP;
+    } // else
+  } // if
+} //moveToFloor
 
 // Load appropriate passengers from elevator's current floor until capacity
 void loadPassengers(void) {
@@ -227,6 +256,7 @@ void loadPassengers(void) {
       osMagicElv.direction == newPassengerNode->passenger.direction) {
 
     // Update floor data
+    mutex_lock_interruptible(&floor_mutex);
     osMagicFloors[osMagicElv.currentFloor].totalServed++;
     osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
         findWeightWhole(newPassengerNode->passenger.weightWhole, newPassengerNode->passenger.weightFrac);
@@ -242,6 +272,7 @@ void loadPassengers(void) {
     list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
     newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
         PassengerNode, passengerList);
+    mutex_unlock(&floor_mutex);
   } // while
   // end the mutex here
 }
@@ -258,19 +289,19 @@ void unloadPassengers(void) {
   // start a mutex here
   list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers)
   {
-     servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
+    servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
 
-     if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
+    if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
 
-     osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
-     servicedPassenger->passenger.weightFrac);
-     osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
-     osMagicElv.totalPass -= servicedPassenger->passenger.size;
+      osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
+      servicedPassenger->passenger.weightFrac);
+      osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
+      osMagicElv.totalPass -= servicedPassenger->passenger.size;
 
-     list_del(ptr);
-     kfree(servicedPassenger);
-     // end the mutex here
-     }
+      list_del(ptr);
+      kfree(servicedPassenger);
+      // end the mutex here
+    }
   }
 
 }

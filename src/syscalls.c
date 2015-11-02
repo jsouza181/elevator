@@ -1,19 +1,36 @@
 #include <syscalls.h>
+#include <linux/kthread.h>
 #include <linux/printk.h>
 #include <linux/slab.h>
 #include "elevator.h"
 #include "scheduler.h"
 
+// Thread to move the elevator and handle loading/unloading passengers.
+static struct task_struct *elevatorMover;
+
 extern long (*STUB_start_elevator)(void);
 long start_elevator(void) {
-  printk("Starting elevator\n");
-
-  // Do not initialize elevator if it has already been started.
-  if(osMagicElv.state != STOPPED)
+  /*
+   * Do not attempt to start the elevator if it has been started.
+   * Elevator movement can only begin if it has already been initialized and
+   * is in the IDLE state, or if it has been STOPPED and is waiting to be started again.
+   */
+  printk("ELV STATE IS %d\n", osMagicElv.state);
+  if(osMagicElv.state != IDLE && osMagicElv.state != STOPPED) {
+    printk("ERROR: Attempting to start elevator that is already running.\n");
     return 1;
+  }
 
-  //Initialize elevator and floors
-  elevatorStart();
+  printk("Starting elevator\n");
+  // Initialize elevator data
+  elevatorInit();
+
+  // Initialize thread for elevator movement.
+  elevatorMover = kthread_run(serviceRequests, NULL, "Elevator mover thread");
+	if (IS_ERR(elevatorMover)) {
+		printk("ERROR! kthread_run, request servicer thread\n");
+		return PTR_ERR(elevatorMover);
+	}
 
   return 0;
 }
@@ -41,32 +58,16 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
 
 extern long (*STUB_stop_elevator)(void);
 long stop_elevator(void) {
-  struct list_head *temp, *ptr;
-  PassengerNode *passenger;
-  int i = 0;
+  int ret;
 
   printk("Stopping elevator\n");
+  // Unload remaining passengers, then free dynamic data.
+  elevatorRelease();
 
-  printk("deallocating elevator\n");
-  if(!list_empty(&osMagicElv.elvPassengers)) {
-    list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers) {
-  		passenger = list_entry(ptr, PassengerNode, passengerList);
-  		list_del(ptr);
-  		kfree(passenger);
-  	}
-  }
-
-  for(i = 0; i < MAX_FLOOR; ++i) {
-    printk("deallocating floors\n");
-    if(list_empty(&osMagicFloors[i].floorPassengers))
-      continue;
-
-    list_for_each_safe(ptr, temp, &osMagicFloors[i].floorPassengers) {
-  		passenger = list_entry(ptr, PassengerNode, passengerList);
-  		list_del(ptr);
-  		kfree(passenger);
-  	}
-  }
+  // Kill thread
+  ret = kthread_stop(elevatorMover);
+  if(ret != -EINTR)
+  	printk("Request servicer thread has stopped\n");
 
   return 0;
 }

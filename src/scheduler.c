@@ -4,31 +4,31 @@
 #include <linux/module.h>
 #include <linux/list.h>
 #include <linux/slab.h>
+#include <linux/mutex.h>
 #include "elevator.h"
 
 // Threaded function to handle elevator movement.
 int serviceRequests(void *data) {
-  ssleep(1);
+  // ssleep(1);
 
   while(!kthread_should_stop()) {
-      // Determine the next floor to visit
-      osMagicElv.nextFloor = scheduleNextFloor();
-      // Sleep for movement
-      ssleep(2);
-      moveToFloor(osMagicElv.nextFloor);
 
-      // Sleep for load/unload
-      ssleep(1);
-      unloadPassengers();
-      loadPassengers();
+    mutex_lock_interruptible(&floor_mutex);
+    // Determine the next floor to visit
+    osMagicElv.nextFloor = scheduleNextFloor();
+    mutex_unlock(&floor_mutex);
 
-    /*
-        elevatorStatus == STOPPED
-        while(elevator is not empty)
-          moveToFloor(next floor)
-          unloadPassengers()
-    */
-  }
+    // Sleep for movement
+    ssleep(2);
+    moveToFloor(osMagicElv.nextFloor);
+
+    // Sleep for load/unload
+    ssleep(1);
+    // no locking needed because each does it on its own
+    unloadPassengers();
+    loadPassengers();
+  } // while
+
+  osMagicElv.state = STOPPED;
   return 0;
-
 }
