@@ -32,3 +32,16 @@ int serviceRequests(void *data) {
   return 0;
 
 }
+    /*
+
+      printk("freeing node\n");
+    }
+    else // No requests left, go IDLE
+      osMagicElv.state = IDLE;
+  }
+    return 0;
+}
+*/
+/*
+      // Move elevator to this request's current floor then service the floor
+*/
