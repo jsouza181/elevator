@@ -57,6 +57,11 @@ long issue_request(int passenger_type, int start_floor, int destination_floor) {
     return 1;
   }
 
+  if(start_floor == destination_floor) {
+    printk("Invalid request.\n");
+    return 1;
+  }
+
   printk("New request: %d, %d => %d\n", passenger_type, start_floor, destination_floor);
 
   // Create a passenger, then add them to the start floor
