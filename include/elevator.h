@@ -69,6 +69,7 @@ typedef struct elevator {
 
 extern Elevator osMagicElv;
 extern Floor osMagicFloors[MAX_FLOOR];
+extern struct mutex floor_mutex;
 
 // Utility functions
 int findWeightWhole(int whole, int frac);

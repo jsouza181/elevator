@@ -1,9 +1,11 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
+#include <linux/mutex.h>
 #include "elevator.h"
 
 Elevator osMagicElv;
 Floor osMagicFloors[];
+struct mutex floor_mutex;
 
 // Initialize elevator and floors
 void elevatorInit(void) {
