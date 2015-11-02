@@ -40,6 +40,7 @@ void elevatorRelease(void) {
   PassengerNode *passenger;
   int i = 0;
 
+  mutex_lock_interruptible(&floor_mutex);
   osMagicElv.state = STOPPED;
 
   if(!list_empty(&osMagicElv.elvPassengers)) {
@@ -47,8 +48,8 @@ void elevatorRelease(void) {
   		passenger = list_entry(ptr, PassengerNode, passengerList);
   		list_del(ptr);
   		kfree(passenger);
-  	}
-  }
+  	} // list_for_each
+  } // if
 
   for(i = 0; i < MAX_FLOOR; ++i) {
     if(list_empty(&osMagicFloors[i].floorPassengers))
@@ -58,8 +59,9 @@ void elevatorRelease(void) {
   		passenger = list_entry(ptr, PassengerNode, passengerList);
   		list_del(ptr);
   		kfree(passenger);
-  	}
-  }
+  	} // list_for_each
+  } // for
+  mutex_unlock(&floor_mutex);
 }
 
 /*
@@ -172,11 +174,13 @@ void addToFloor(int floorNum, Passenger pgr) {
   newPassengerNode->passenger.weightFrac = pgr.weightFrac;
   newPassengerNode->passenger.size = pgr.size;
 
+  mutex_lock_interruptible(&floor_mutex);
   list_add_tail(&newPassengerNode->passengerList, &osMagicFloors[floorNum].floorPassengers);
 
   osMagicFloors[floorNum].totalWeightWhole += newPassengerNode->passenger.weightWhole;
   osMagicFloors[floorNum].totalWeightFrac += newPassengerNode->passenger.weightFrac;
   osMagicFloors[floorNum].totalPass += newPassengerNode->passenger.size;
+  mutex_unlock(&floor_mutex);
 }
 
 Passenger createPassenger(int passengerType, int currentFloor, int nextFloor) {
@@ -243,6 +247,7 @@ void loadPassengers(void) {
       osMagicElv.direction == newPassengerNode->passenger.direction) {
 
     // Update floor data
+    mutex_lock_interruptible(&floor_mutex);
     osMagicFloors[osMagicElv.currentFloor].totalServed++;
     osMagicFloors[osMagicElv.currentFloor].totalWeightWhole -=
         findWeightWhole(newPassengerNode->passenger.weightWhole, newPassengerNode->passenger.weightFrac);
@@ -258,6 +263,7 @@ void loadPassengers(void) {
     list_move_tail(&newPassengerNode->passengerList, &osMagicElv.elvPassengers);
     newPassengerNode = list_first_entry(&osMagicFloors[osMagicElv.currentFloor].floorPassengers,
         PassengerNode, passengerList);
+    mutex_unlock(&floor_mutex);
   } // while
   // end the mutex here
 }
@@ -274,19 +280,19 @@ void unloadPassengers(void) {
   // start a mutex here
   list_for_each_safe(ptr, temp, &osMagicElv.elvPassengers)
   {
-     servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
+    servicedPassenger = list_entry(ptr, PassengerNode, passengerList);
 
-     if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
+    if(osMagicElv.currentFloor == servicedPassenger->passenger.destination) {
 
-     osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
-     servicedPassenger->passenger.weightFrac);
-     osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
-     osMagicElv.totalPass -= servicedPassenger->passenger.size;
+      osMagicElv.totalWeightWhole -= findWeightWhole(servicedPassenger->passenger.weightWhole,
+      servicedPassenger->passenger.weightFrac);
+      osMagicElv.totalWeightFrac -= findWeightFrac(servicedPassenger->passenger.weightFrac);
+      osMagicElv.totalPass -= servicedPassenger->passenger.size;
 
-     list_del(ptr);
-     kfree(servicedPassenger);
-     // end the mutex here
-     }
+      list_del(ptr);
+      kfree(servicedPassenger);
+      // end the mutex here
+    }
   }
 
 }

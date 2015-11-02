@@ -11,13 +11,13 @@
 int serviceRequests(void *data) {
   ssleep(1);
 
-
   while(!kthread_should_stop()) {
-    // lock the mutex
+
     mutex_lock_interruptible(&floor_mutex);
-    printk("Elevator: Lock obtained. serviceRequests\n");
     // Determine the next floor to visit
     osMagicElv.nextFloor = scheduleNextFloor();
+    mutex_unlock(&floor_mutex);
+
     // Sleep for movement
     ssleep(2);
     moveToFloor(osMagicElv.nextFloor);
@@ -26,8 +26,6 @@ int serviceRequests(void *data) {
     ssleep(1);
     unloadPassengers();
     loadPassengers();
-    mutex_unlock(&floor_mutex);
-    printk("Elevator: Lock released. serviceRequests\n");
   } // while
 
   osMagicElv.state = STOPPED;
