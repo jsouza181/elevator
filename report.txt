@@ -1,0 +1,68 @@
+
+Problem statement:
+============================
+(Either paraphrase the assignment goal or copy/paste the<br>
+assignment problem statement here.)<br>
+Implement a shell program.<br>
+
+Steps taken to solve problem
+============================
+1. Experimented with existing shell.<br>
+2. Took notes on how it handled certain commands.<br>
+3. Wrote a few test programs to understand directory searching.<br>
+4. Implemented user-input routine.<br>
+5. Implemented input-parsing routine.<br>
+6. Implemented input redirection.<br>
+7. Implemented background process.<br>
+8. Experimented with our shell to make sure above were correct.<br>
+9. Implemented zombie-termination.<br>
+10. Implemented forking new process.<br>
+11. Completed.<br>
+
+Assumptions
+============================
+•	Redirection and piping would not be mixed within a single command
+•	No more than three pipes per command
+•	Limits and etimes will not be called in the background.
+
+System calls
+============================
+
+unistd.h - fork(), execv(), access(), pipe(), dup2(), gethostname(), getcwd(), getenv(), setenv()
+wait.h - waitpid()
+
+Problems
+============================
+- cd not in a fork (We don't think it needs to be, since PWD is process-specific)
+- getting the limits file after the child was executed
+- fixed by creating a temporary file
+- considered putting parent to sleep to force a context switch, but that seemed unreliable
+- input redirection through us for a loop, because echo does not accept it
+- precious time was lost in this
+- Linprog keeps getting overwhelmed and running extremely slowly. Sometimes confusing us as to whether our program broke or Linprog.
+
+Known Bugs
+============================
+- no known bugs
+
+Division of Labor
+============================
+Jason Souza
+
+Ricardo Castilla
+
+Philip Scott
+
+Conor Stephens
+
+Slack Days Used
+============================
+none
+
+Log
+============================
+●
+
+Questions
+============================
+●
